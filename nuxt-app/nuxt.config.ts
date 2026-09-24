@@ -7,6 +7,7 @@ export default defineNuxtConfig({
     '@nuxtjs/seo',
     '@nuxt/eslint',
     '@vite-pwa/nuxt',
+    '@vercel/analytics',
   ],
   css: ['~/assets/css/tokens.css'],
   // Self-hosted via @nuxt/fonts (resolved from Google at build time, served
