@@ -380,6 +380,8 @@ def main():
         period = period or osm_period(t['start'], t['civ'])
         km_name = t['km'] or (e.get('labels', {}).get('km') or {}).get('value', '')
         en_name = t['en'] or (e.get('labels', {}).get('en') or {}).get('value', '')
+        if not (km_name or en_name):
+            continue  # no Khmer or English name anywhere: nothing to show or search
         hist = {}
         for lang in ('km', 'en'):
             title = t.get(f'{lang}wiki')

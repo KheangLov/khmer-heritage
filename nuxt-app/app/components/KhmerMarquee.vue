@@ -25,5 +25,5 @@ const items: Array<{ t: string; i: KhmerIconName }> = [
 <style scoped>
 .marquee{overflow:hidden;border-block:1px solid rgba(212,175,55,.18);padding:26px 0;background:linear-gradient(90deg,var(--night),rgba(30,51,38,.55),var(--night));mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
 .mq-item{display:inline-flex;align-items:center;gap:14px;margin-right:56px;font-family:var(--title);font-size:1.35rem;line-height:2;color:var(--stone);white-space:nowrap}
-.mq-item :deep(svg){color:var(--gold-2)}
+.mq-item :deep(.kh-icon){color:var(--gold-2)}
 </style>

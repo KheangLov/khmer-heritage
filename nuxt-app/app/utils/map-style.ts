@@ -11,6 +11,11 @@ import type * as GeoJSON from 'geojson'
 // cluster at a time through the browser's own text engine, so Khmer vowels and
 // subscripts (ជើង) shape correctly. The Khmer range of every font stack is
 // mapped to the site's Battambang subset in /fonts/.
+// Performance: the hillshade is a faint relief under a dark palette, so its
+// elevation source stops at z9 and is overzoomed beyond — each DEM tile is a
+// 35–100 KB PNG plus a decode and a GPU prepare pass, and at z12+ a full-res
+// source fetched dozens of them per pan for no visible gain. (3D terrain keeps
+// its own full-resolution source, loaded only when switched on.)
 
 const KHMER_RANGE = ['U+1780-17FF', 'U+19E0-19FF', 'U+200C-200D', 'U+25CC']
 const C = {
@@ -52,7 +57,7 @@ export function khmerNightStyle(origin: string): StyleSpecification {
     'font-faces': { 'Noto Sans Regular': face(400), 'Noto Sans Bold': face(700), 'Noto Sans Italic': face(400) },
     sources: {
       omt: { type: 'vector', url: 'https://tiles.openfreemap.org/planet', attribution: '<a href="https://openfreemap.org" target="_blank">OpenFreeMap</a> · <a href="https://www.openmaptiles.org/" target="_blank">© OpenMapTiles</a> · <a href="https://www.openstreetmap.org/copyright" target="_blank">© OpenStreetMap</a>' },
-      hillshade: { type: 'raster-dem', tiles: ['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'], encoding: 'terrarium', tileSize: 256, maxzoom: 12, attribution: 'Terrain Tiles (Mapzen/AWS)' },
+      hillshade: { type: 'raster-dem', tiles: ['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'], encoding: 'terrarium', tileSize: 256, maxzoom: 9, attribution: 'Terrain Tiles (Mapzen/AWS)' },
       'terrain-dem': { type: 'raster-dem', tiles: ['https://s3.amazonaws.com/elevation-tiles-prod/terrarium/{z}/{x}/{y}.png'], encoding: 'terrarium', tileSize: 256, maxzoom: 13 },
       khm: { type: 'geojson', data: { type: 'Feature', properties: {}, geometry: KHM } },
       outside: { type: 'geojson', data: OUTSIDE },

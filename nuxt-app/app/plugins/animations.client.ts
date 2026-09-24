@@ -2,7 +2,6 @@ import { defineNuxtPlugin } from '#imports'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { SplitText } from 'gsap/SplitText'
-import { DrawSVGPlugin } from 'gsap/DrawSVGPlugin'
 import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin'
 import Lenis from 'lenis'
 
@@ -24,13 +23,16 @@ export default defineNuxtPlugin((nuxtApp) => {
   if (!import.meta.client) return
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
-  gsap.registerPlugin(ScrollTrigger, SplitText, DrawSVGPlugin, ScrambleTextPlugin)
+  gsap.registerPlugin(ScrollTrigger, SplitText, ScrambleTextPlugin)
   // Initial hidden states only apply under `.js-anim` (see animations.css),
   // so no-JS visitors and crawlers always see the full content.
   document.documentElement.classList.add('js-anim')
 
   // ---- Smooth scroll (Lenis) driven by GSAP's ticker ----
-  const lenis = new Lenis({ lerp: 0.09, wheelMultiplier: 0.95 })
+  // allowNestedScroll: wheel/touch over an inner scroller (the map's temple
+  // list, the map card, calendar panels) scrolls that element natively instead
+  // of being hijacked into a page scroll.
+  const lenis = new Lenis({ lerp: 0.09, wheelMultiplier: 0.95, allowNestedScroll: true })
   lenis.on('scroll', ScrollTrigger.update)
   gsap.ticker.add((t) => lenis.raf(t * 1000))
   gsap.ticker.lagSmoothing(0)
@@ -65,6 +67,11 @@ export default defineNuxtPlugin((nuxtApp) => {
       requestAnimationFrame(() => {
         queued = false
         ring.classList.toggle('is-hot', !!target?.closest?.('a,button,[data-tilt],.kh-mk'))
+        // Over the map the native grab/pointer cursor is the right affordance,
+        // and a blended layer over a WebGL canvas costs a composite per frame.
+        const off = !!target?.closest?.('.maplibregl-canvas-container')
+        ring.classList.toggle('is-off', off)
+        dot.classList.toggle('is-off', off)
       })
     }, { passive: true })
   }
@@ -163,12 +170,25 @@ export default defineNuxtPlugin((nuxtApp) => {
       })
     })
 
+    // Stroke tracing without measuring: pathLength="1" normalises every stroke,
+    // so a dash offset of 1 hides it and 0 shows it. (DrawSVG measured each
+    // path with getBBox/getScreenCTM up front — ~400 forced layouts on the
+    // timeline.) The tween is only built when the icon scrolls into view.
     gsap.utils.toArray<SVGSVGElement>('svg.kh-draw').forEach((svg) => {
       if (!once(svg, 'draw')) return
-      const strokes = svg.querySelectorAll('path,circle,ellipse,rect')
-      gsap.from(strokes, {
-        drawSVG: 0, duration: 1.6, stagger: 0.08, ease: 'power2.inOut',
-        scrollTrigger: { trigger: svg, start: 'top 92%', once: true },
+      const strokes = [...svg.querySelectorAll<SVGGeometryElement>('path,circle,ellipse,rect')]
+      strokes.forEach((el) => el.setAttribute('pathLength', '1'))
+      svg.classList.add('kh-armed')
+      ScrollTrigger.create({
+        trigger: svg, start: 'top 92%', once: true,
+        onEnter: () => gsap.fromTo(strokes, { strokeDashoffset: 1 }, {
+          strokeDashoffset: 0, duration: 1.6, stagger: 0.08, ease: 'power2.inOut',
+          onComplete: () => {
+            svg.classList.remove('kh-armed')
+            gsap.set(strokes, { clearProps: 'strokeDashoffset' })
+            strokes.forEach((el) => el.removeAttribute('pathLength'))
+          },
+        }),
       })
     })
 
@@ -235,10 +255,18 @@ export default defineNuxtPlugin((nuxtApp) => {
     ScrollTrigger.refresh()
   }
 
-  nuxtApp.hook('app:mounted', () => { requestAnimationFrame(setup) })
-  // Wait for the out-in page transition to finish before measuring.
-  nuxtApp.hook('page:transition:finish', () => { requestAnimationFrame(setup) })
-  nuxtApp.hook('page:finish', () => { setTimeout(setup, 450) })
+  // One setup per navigation: these hooks fire in quick succession, and every
+  // setup ends in ScrollTrigger.refresh(), which re-measures every trigger.
+  // The latest request wins; page:finish waits out the out-in transition in
+  // case page:transition:finish never comes (e.g. no transition on the route).
+  let pending: ReturnType<typeof setTimeout> | undefined
+  const schedule = (delay: number) => {
+    clearTimeout(pending)
+    pending = setTimeout(() => requestAnimationFrame(setup), delay)
+  }
+  nuxtApp.hook('app:mounted', () => schedule(0))
+  nuxtApp.hook('page:transition:finish', () => schedule(0))
+  nuxtApp.hook('page:finish', () => schedule(450))
   window.addEventListener('load', () => ScrollTrigger.refresh())
   document.fonts?.ready.then(() => ScrollTrigger.refresh())
 

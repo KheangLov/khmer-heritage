@@ -75,5 +75,5 @@ h1,h2,h3,h4,h5,h6{font-weight:400;line-height:var(--lh-title);overflow:visible}
 @supports (corner-shape: squircle) {
   :root{ --r-xs:11px; --r-sm:16px; --r-md:22px; --r-lg:30px; --r-xl:38px; }
   *, *::before, *::after { corner-shape: squircle; }
-  .tl-dot, .h-dot, .moon, .kh-cursor, .kh-cursor-dot, .kh-me, .scroll-cue span, .round { corner-shape: round; }
+  .tl-dot, .h-dot, .tl-dot::after, .h-dot::after, .moon, .kh-cursor, .kh-cursor-dot, .kh-me, .scroll-cue span, .round { corner-shape: round; }
 }

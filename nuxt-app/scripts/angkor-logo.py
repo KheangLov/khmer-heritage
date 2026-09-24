@@ -7,7 +7,8 @@ dark engraved lines instead of white fill, black lines).
 
 The temple group is split into parts so the header logo can build itself:
   gallery · centre tower · left tower · right tower (mirror of left) · base
-and written to app/data/angkor-logo.json, plus public/favicon.svg.
+and written to app/data/angkor-logo.json, plus public/favicon.svg and the
+icon mask public/icons/angkor-wat.svg.
 
 Run:  python3 scripts/angkor-logo.py
 The PNG/ICO icons (favicon.ico, apple-touch-icon.png, icon-192/512.png) are
@@ -86,7 +87,21 @@ def main():
     )
     with open(os.path.join(ROOT, 'public', 'favicon.svg'), 'w', encoding='utf-8') as fh:
         fh.write(fav)
-    print('wrote app/data/angkor-logo.json and public/favicon.svg')
+
+    # Icon mask: the `temple` KhmerIcon at list/nav sizes is painted as a CSS
+    # mask over this file (one cached raster instead of ~70 SVG nodes per
+    # icon). Same geometry and line weight as the inline icon in KhmerIcon.vue;
+    # black = opaque, the fill-opacity gives the duotone relief.
+    mask = (
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">'
+        '<style>.a *{stroke-width:5.5px}.a g[fill="none"] *{fill:none}</style>'
+        '<svg x="0" y="4" width="48" height="40" viewBox="62 548 266.5 176" overflow="visible">'
+        f'<g class="a" fill="#000" fill-opacity=".2" stroke="#000" stroke-linejoin="round">{temple}</g></svg></svg>'
+    )
+    os.makedirs(os.path.join(ROOT, 'public', 'icons'), exist_ok=True)
+    with open(os.path.join(ROOT, 'public', 'icons', 'angkor-wat.svg'), 'w', encoding='utf-8') as fh:
+        fh.write(mask)
+    print('wrote app/data/angkor-logo.json, public/favicon.svg and public/icons/angkor-wat.svg')
 
 
 if __name__ == '__main__':

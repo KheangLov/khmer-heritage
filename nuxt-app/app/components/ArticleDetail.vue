@@ -80,7 +80,7 @@ const related = computed(() => props.page.related.map((r) => ({ ...r, v: related
 .facts{padding:60px 0 20px}
 .fact-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px}
 .fact{border:1px solid rgba(212,175,55,.14);border-radius:var(--r-md);padding:20px 22px;background:radial-gradient(120% 100% at 0% 0%,rgba(46,74,53,.5),rgba(20,36,27,.35))}
-.fact :deep(svg){color:var(--gold-2);margin-bottom:6px}
+.fact :deep(.kh-icon){color:var(--gold-2);margin-bottom:6px}
 .fact dt{font-family:var(--khmer);font-size:.82rem;letter-spacing:.06em;color:var(--gold-2);line-height:1.9}
 .fact dd{font-family:var(--khmer);color:var(--ivory);font-size:.95rem;line-height:2;margin:0}
 
@@ -110,6 +110,6 @@ const related = computed(() => props.page.related.map((r) => ({ ...r, v: related
 .rel img{width:100%;height:100%;object-fit:cover;opacity:.55;transition:transform 1s var(--ease),opacity .4s}
 .rel:hover img{transform:scale(1.07);opacity:.7}
 .rel-body{position:absolute;inset:auto 0 0 0;display:flex;align-items:center;gap:10px;padding:14px 18px;font-family:var(--title);font-size:1.1rem;line-height:1.9;color:var(--ivory);background:linear-gradient(180deg,transparent,rgba(10,16,13,.92))}
-.rel-body :deep(svg){color:var(--gold-2);flex:none}
+.rel-body :deep(.kh-icon){color:var(--gold-2);flex:none}
 .rel-body em{margin-left:auto;font-style:normal;color:var(--gold-2)}
 </style>
