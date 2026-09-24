@@ -314,7 +314,7 @@ h1{font-family:var(--display);font-size:clamp(1.7rem,3.6vw,2.5rem);color:var(--i
 /* ---- Fullscreen: the whole section (panel + map) fills the screen ---- */
 .app.fs{position:relative;display:block;width:100%;max-width:none;height:100dvh;min-height:0;margin:0;padding:0;background:var(--night)}
 .app.fs .stage{position:absolute;inset:0;height:auto;min-height:0}
-.app.fs .side{position:absolute;z-index:6;top:14px;left:14px;bottom:14px;width:370px;background:rgba(10,17,13,.94);box-shadow:0 18px 50px rgba(0,0,0,.55);transition:transform .4s var(--ease),opacity .3s var(--ease)}
+.app.fs .side{position:absolute;z-index:6;top:calc(14px + env(safe-area-inset-top));left:14px;bottom:14px;width:370px;background:rgba(10,17,13,.94);box-shadow:0 18px 50px rgba(0,0,0,.55);transition:transform .4s var(--ease),opacity .3s var(--ease)}
 .app.fs.panel-closed .side{transform:translateX(calc(-100% - 24px));opacity:0;pointer-events:none}
 .side-head{display:flex;align-items:center;gap:8px;margin:-2px 0 10px}
 .grip{display:none}
@@ -323,7 +323,7 @@ h1{font-family:var(--display);font-size:clamp(1.7rem,3.6vw,2.5rem);color:var(--i
 .side-x{width:34px;height:34px;border-radius:var(--r-sm)}
 .side-x:hover,.panel-tab:hover{background:rgba(212,175,55,.16);border-color:var(--gold)}
 .side-x svg,.panel-tab svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.panel-tab{position:absolute;z-index:6;top:14px;left:14px;width:48px;height:48px;border-radius:var(--r-md);box-shadow:0 12px 30px rgba(0,0,0,.45)}
+.panel-tab{position:absolute;z-index:6;top:calc(14px + env(safe-area-inset-top));left:14px;width:48px;height:48px;border-radius:var(--r-md);box-shadow:0 12px 30px rgba(0,0,0,.45)}
 .panel-tab .n{position:absolute;top:-8px;right:-10px;min-width:22px;padding:0 6px;border-radius:var(--r-pill);background:var(--gold-2);color:var(--night);font-family:var(--khmer);font-size:.66rem;line-height:1.75;text-align:center}
 
 /* phone: the panel is a bottom sheet over the map */
@@ -333,6 +333,6 @@ h1{font-family:var(--display);font-size:clamp(1.7rem,3.6vw,2.5rem);color:var(--i
   .app.fs .list{overflow:auto}
   .app.fs .grip{display:block;position:absolute;top:6px;left:50%;width:40px;height:4px;margin-left:-20px;border-radius:var(--r-pill);background:rgba(212,175,55,.35)}
   .app.fs .side-head{margin-top:8px}
-  .panel-tab{top:10px;left:10px;width:44px;height:44px}
+  .panel-tab{top:calc(10px + env(safe-area-inset-top));left:10px;width:44px;height:44px}
 }
 </style>

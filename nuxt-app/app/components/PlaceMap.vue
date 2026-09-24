@@ -656,6 +656,8 @@ onBeforeUnmount(() => {
 .full,.full .pm-stage,.full .pm-map{height:100%}
 .fs,.fs .pm-stage,.fs .pm-map{height:100%}
 .fs{border:0;border-radius:0;box-shadow:none}
+/* fullscreen reaches under a phone's status bar / notch */
+.fs .pm-seg,.fs .pm-ctrl{top:calc(14px + env(safe-area-inset-top))}
 
 .pm-loading{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:10px;font-family:var(--khmer);line-height:1.9;color:var(--stone);background:radial-gradient(60% 60% at 50% 50%,rgba(46,74,53,.5),#0B1310)}
 .spin{color:var(--gold-2);animation:pm-spin 2.4s linear infinite}
