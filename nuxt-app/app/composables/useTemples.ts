@@ -70,6 +70,14 @@ export function useTempleFilters() {
   const ready = ref(false)
 
   const q = ref('')
+  // The search box drives the list, the map's clustering (re-run in its worker)
+  // and the URL; settle typing first instead of doing all three per keystroke.
+  const needle = ref('')
+  let typing: ReturnType<typeof setTimeout> | undefined
+  watch(q, (v) => {
+    clearTimeout(typing)
+    typing = setTimeout(() => { needle.value = v.trim().toLowerCase() }, v ? 140 : 0)
+  })
   const kind = ref<'all' | 'prasat' | 'wat' | 'history'>('all')
   const province = ref('')
   const district = ref('')
@@ -123,13 +131,13 @@ export function useTempleFilters() {
   })
 
   const results = computed(() => {
-    const needle = q.value.trim().toLowerCase()
+    const n = needle.value
     return byKind.value.filter((t) =>
       (!province.value || t.p === province.value)
       && (!district.value || t.d === district.value)
       && (!commune.value || t.m === commune.value)
       && (!village.value || t.v === village.value)
-      && (!needle || t.km.toLowerCase().includes(needle) || t.en.toLowerCase().includes(needle)))
+      && (!n || t.km.toLowerCase().includes(n) || t.en.toLowerCase().includes(n)))
   })
 
   const unitName = (list: AdminUnit[], code: string) => list.find((u) => u.c === code)?.km ?? ''

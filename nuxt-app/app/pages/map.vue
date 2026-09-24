@@ -2,7 +2,7 @@
 import { PLACES, HERITAGE_PLACES, type PlaceView } from '~/data/places'
 import { khmerNum } from '~/utils/khmer-calendar'
 import type * as GeoJSON from 'geojson'
-import { useTempleFilters, loadProvinces, loadDistricts, loadCommunes, templeName, type TempleRow } from '~/composables/useTemples'
+import { useTempleFilters, loadTemples, loadProvinces, loadDistricts, loadCommunes, templeName, type TempleRow } from '~/composables/useTemples'
 
 useHead({
   title: 'ផែនទីប្រាសាទ និងប្រវត្តិសាស្ត្រ',
@@ -37,24 +37,41 @@ watch([province, district, commune], async ([p, d, m]) => {
 })
 
 // ---------- selection & URL sync ----------
-const route = useRoute()
 const router = useRouter()
-const focus = ref(typeof route.query.place === 'string' ? route.query.place : '')
+const focus = ref('')
 const hoverId = ref('')
 const mapRef = ref<{ select: (id: string) => void } | null>(null)
 
-onMounted(async () => {
-  // Restore filters level by level (each level's watcher clears the ones below).
-  const qy = route.query
-  if (typeof qy.q === 'string') q.value = qy.q
-  if (typeof qy.kind === 'string' && ['prasat', 'wat', 'history'].includes(qy.kind)) kind.value = qy.kind as typeof kind.value
+// Restore a shared link once the app is hydrated. /map is prerendered, and a
+// prerendered page hydrates at the route it was rendered at — while mounting,
+// both useRoute().query and window.location lack the query string; Nuxt puts
+// the real URL back afterwards.
+onNuxtReady(async () => {
+  const qy = Object.fromEntries(new URLSearchParams(window.location.search))
+  if (qy.q) q.value = qy.q
+  if (qy.kind && ['prasat', 'wat', 'history'].includes(qy.kind)) kind.value = qy.kind as typeof kind.value
+  // Level by level: each level's watcher clears the ones below it.
   for (const [r, key] of [[province, 'province'], [district, 'district'], [commune, 'commune'], [village, 'village']] as const) {
-    if (typeof qy[key] !== 'string') break
+    if (!qy[key]) break
     await nextTick()
-    r.value = qy[key] as string
+    r.value = qy[key]
+  }
+  if (qy.place) {
+    // a temple id resolves only once the index is in
+    await loadTemples().catch(() => {})
+    await nextTick()
+    focus.value = qy.place
   }
 })
+// Mirror filters into the URL (shareable links) — debounced, so typing does
+// not push a router navigation per keystroke.
+let urlTimer: ReturnType<typeof setTimeout> | undefined
 watch([q, kind, province, district, commune, village, focus], () => {
+  clearTimeout(urlTimer)
+  urlTimer = setTimeout(syncUrl, 300)
+})
+onBeforeUnmount(() => clearTimeout(urlTimer))
+function syncUrl() {
   const query: Record<string, string> = {}
   if (q.value.trim()) query.q = q.value.trim()
   if (kind.value !== 'all') query.kind = kind.value
@@ -64,7 +81,7 @@ watch([q, kind, province, district, commune, village, focus], () => {
   if (village.value) query.village = village.value
   if (focus.value) query.place = focus.value
   router.replace({ query })
-})
+}
 
 function pick(id: string) {
   focus.value = id
@@ -89,7 +106,7 @@ const kinds = [
   { id: 'all', name: 'ទាំងអស់' },
   { id: 'prasat', name: 'ប្រាសាទបុរាណ' },
   { id: 'wat', name: 'វត្តប្រវត្តិសាស្ត្រ' },
-  { id: 'history', name: 'មានប្រវត្តិ' },
+  { id: 'history', name: 'មានអត្ថបទលម្អិត' },
 ] as const
 const rowSub = (t: TempleRow) => [t.en && t.en !== t.km ? t.en : '', t.y].filter(Boolean).join(' · ')
 </script>
@@ -101,7 +118,7 @@ const rowSub = (t: TempleRow) => [t.en && t.en !== t.km ? t.en : '', t.y].filter
         <div class="kicker"><KhmerIcon name="pin" :size="18" />ទីតាំង · ប្រវត្តិ · ទិសដៅ</div>
         <h1 data-ink>ផែនទីប្រាសាទកម្ពុជា</h1>
       </div>
-      <p class="lead">ប្រាសាទប្រវត្តិសាស្ត្រ {{ ready ? khmerNum(f.temples.value.length) : '…' }} កន្លែង ទូទាំងប្រទេស — ស្វែងរកតាមខេត្ត ស្រុក ឃុំ ភូមិ ហើយចុចលើប្រាសាទ ដើម្បីអានប្រវត្តិ។</p>
+      <p class="lead">ប្រាសាទប្រវត្តិសាស្ត្រ {{ ready ? khmerNum(f.temples.value.length) : '…' }} កន្លែង ទូទាំងប្រទេស — ស្វែងរកតាមខេត្ត ស្រុក ឃុំ ភូមិ ហើយចុចលើប្រាសាទនីមួយៗ ដើម្បីមើលទីតាំង និងអានប្រវត្តិ។</p>
     </header>
 
     <section class="app wrap">
@@ -176,7 +193,7 @@ const rowSub = (t: TempleRow) => [t.en && t.en !== t.km ? t.en : '', t.y].filter
                 <span class="nm">{{ templeName(t) }}</span>
                 <span class="sub">{{ rowSub(t) || (t.c === 'wat' ? 'វត្តប្រវត្តិសាស្ត្រ' : 'ប្រាសាទបុរាណ') }}</span>
               </span>
-              <span v-if="t.h" class="badge" title="មានប្រវត្តិ">ប្រវត្តិ</span>
+              <span v-if="t.h" class="badge" title="មានអត្ថបទប្រវត្តិលម្អិតពីវិគីភីឌា">អត្ថបទ</span>
             </button>
           </li>
           <li v-if="shown < results.length" class="more">

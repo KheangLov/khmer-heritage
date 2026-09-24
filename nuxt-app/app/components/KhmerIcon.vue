@@ -210,6 +210,10 @@ export type KhmerIconName = keyof typeof KHMER_ICONS
 // strokes use currentColor and `.f` shapes get a translucent currentColor
 // fill, so each motif reads as carved relief on any background.
 // With `draw` set, the animation plugin traces the strokes on scroll.
+// Angkor Wat (`temple`) is the full flag-accurate brand mark — ~70 SVG nodes —
+// and appears in every map-list row, so unless it is being drawn it is painted
+// as a currentColor mask over public/icons/angkor-wat.svg (one cached raster,
+// same geometry; built by scripts/angkor-logo.py).
 defineOptions({ inheritAttrs: false })
 
 withDefaults(defineProps<{
@@ -222,8 +226,16 @@ withDefaults(defineProps<{
 })
 </script>
 <template>
+  <span
+    v-if="name === 'temple' && !draw"
+    class="kh-icon kh-mask"
+    :class="$attrs.class"
+    :style="{ width: `${size}px`, height: `${size}px` }"
+    aria-hidden="true"
+  />
   <!-- eslint-disable vue/no-v-html -->
   <svg
+    v-else
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 48 48"
     :width="size"
@@ -241,6 +253,7 @@ withDefaults(defineProps<{
 </template>
 
 <style>
+.kh-mask{display:block;flex:none;background:currentColor;-webkit-mask:url(/icons/angkor-wat.svg) center/contain no-repeat;mask:url(/icons/angkor-wat.svg) center/contain no-repeat}
 .kh-icon .f{fill:currentColor;fill-opacity:.16}
 .kh-aw *{stroke-width:5.5px}
 .kh-aw g[fill="none"] *{fill:none}

@@ -7,7 +7,10 @@
    costliest thing a scroll reveal can do. */
 html.js-anim [data-reveal] { opacity: 0; transform: translateY(28px); }
 html.js-anim [data-words] { visibility: hidden; }
-.kh-word { display: inline-block; will-change: transform, opacity; }
+/* No will-change on words or reveal images: each would keep its own GPU layer
+   for the life of the page after a one-off animation (GSAP promotes elements
+   only while they are animating). */
+.kh-word { display: inline-block; }
 
 /* ---- Gold ink sweep ----
    A soft-edged horizontal mask travels across the heading. It only masks
@@ -19,10 +22,15 @@ html.js-anim [data-ink] { --ink: -30%;
   mask-image: linear-gradient(90deg, #000 calc(var(--ink) - 25%), transparent var(--ink));
 }
 
+/* ---- Stroke tracing (svg.kh-draw) ----
+   The plugin sets pathLength="1" on each stroke and adds .kh-armed; the strokes
+   stay hidden until their scroll trigger tweens the offset to 0. */
+html.js-anim svg.kh-armed :is(path, circle, ellipse, rect) { stroke-dasharray: 1 1; stroke-dashoffset: 1; }
+
 /* ---- Image curtain ---- */
 [data-img-reveal] { overflow: hidden; }
 html.js-anim [data-img-reveal] { clip-path: inset(100% 0 0 0); }
-[data-img-reveal] img { transform-origin: 50% 60%; will-change: transform; }
+[data-img-reveal] img { transform-origin: 50% 60%; }
 
 /* ---- Tilt cards: gold glare follows the pointer ---- */
 [data-tilt] { transform-style: preserve-3d; position: relative; isolation: isolate; }
@@ -49,6 +57,7 @@ html.js-anim [data-img-reveal] { clip-path: inset(100% 0 0 0); }
   mix-blend-mode: screen;
 }
 .kh-cursor.is-hot { width: 64px; height: 64px; margin: -32px 0 0 -32px; background: rgba(212, 175, 55, .12); border-color: var(--gold); }
+.kh-cursor.is-off, .kh-cursor-dot.is-off { opacity: 0; }
 .kh-cursor-dot { width: 5px; height: 5px; margin: -2.5px 0 0 -2.5px; background: var(--gold-2); }
 
 /* ---- Page transitions ---- */
@@ -57,12 +66,17 @@ html.js-anim [data-img-reveal] { clip-path: inset(100% 0 0 0); }
 .page-leave-to { opacity: 0; transform: translateY(-10px); }
 
 
-/* ---- Ambient: breathing gold halo (timeline dots) ---- */
-@keyframes kh-glow {
-  0%, 100% { box-shadow: 0 0 0 5px rgba(212,175,55,.1), 0 0 0 1px rgba(212,175,55,.5), 0 0 22px rgba(212,175,55,.35); }
-  50% { box-shadow: 0 0 0 7px rgba(212,175,55,.16), 0 0 0 1px rgba(212,175,55,.65), 0 0 38px rgba(212,175,55,.8); }
+/* ---- Ambient: breathing gold halo (timeline dots) ----
+   The resting halo is static; the "breath" is a brighter halo on ::after whose
+   opacity pulses — an opacity animation runs on the compositor, whereas
+   animating box-shadow repainted every dot on every frame, forever. */
+.tl-dot, .h-dot { box-shadow: 0 0 0 5px rgba(212,175,55,.1), 0 0 0 1px rgba(212,175,55,.5), 0 0 22px rgba(212,175,55,.35); }
+.tl-dot::after, .h-dot::after {
+  content: ""; position: absolute; inset: 0; border-radius: 50%; pointer-events: none;
+  box-shadow: 0 0 0 7px rgba(212,175,55,.16), 0 0 0 1px rgba(212,175,55,.65), 0 0 38px rgba(212,175,55,.8);
+  opacity: 0; animation: kh-glow 5s ease-in-out infinite;
 }
-.tl-dot, .h-dot { animation: kh-glow 5s ease-in-out infinite; }
+@keyframes kh-glow { 50% { opacity: 1; } }
 
 /* ---- Ambient: shimmer across gold titles ---- */
 .shimmer {
@@ -72,9 +86,11 @@ html.js-anim [data-img-reveal] { clip-path: inset(100% 0 0 0); }
   background-size: 250% 100%, 100% 100%;
   background-repeat: no-repeat;
   -webkit-background-clip: text; background-clip: text; color: transparent;
-  animation: kh-shimmer 8s linear infinite;
+  animation: kh-shimmer 9s ease-in-out 1s infinite;
 }
-@keyframes kh-shimmer { 0% { background-position: 200% 0, 0 0; } 100% { background-position: -200% 0, 0 0; } }
+/* The sweep takes the first third of the cycle; the title then rests, so it
+   is not repainted on every frame (background-position can't be composited). */
+@keyframes kh-shimmer { 0% { background-position: 200% 0, 0 0; } 35%, 100% { background-position: -200% 0, 0 0; } }
 
 /* ---- Ambient: slow-turning kbach mandala ---- */
 @keyframes kh-spin { to { transform: rotate(360deg); } }
@@ -93,7 +109,7 @@ html.js-anim [data-img-reveal] { clip-path: inset(100% 0 0 0); }
 /* ---- Reduced motion: everything visible, nothing moves ---- */
 @media (prefers-reduced-motion: reduce) {
   html.js-anim [data-reveal] { opacity: 1; transform: none; }
-  .tl-dot, .h-dot, .shimmer, .mandala, .kenburns, .marquee-track { animation: none; }
+  .tl-dot::after, .h-dot::after, .shimmer, .mandala, .kenburns, .marquee-track { animation: none; }
   .page-enter-active, .page-leave-active { transition: none; }
 }
 @media (pointer: fine) { html.js-anim, html.js-anim a, html.js-anim button { cursor: none; } }

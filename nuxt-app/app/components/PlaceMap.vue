@@ -5,6 +5,7 @@ import { KHMER_ICONS, type KhmerIconName } from '~/components/KhmerIcon.vue'
 import { type PlaceView, PLACES, CAMBODIA_BOUNDS, distanceKm, bearingDeg, khmerDirection } from '~/data/places'
 import { TIMELINE } from '~/data/visuals'
 import { khmerNum } from '~/utils/khmer-calendar'
+import { periodOf, heritageLabel } from '~/utils/temple-history'
 import { khmerNightStyle, SATELLITE_LAYER, VECTOR_FILL_LAYERS } from '~/utils/map-style'
 import {
   type TempleRow, type TempleDetail, loadTemples, loadTempleDetail, loadProvinces, loadDistricts, loadCommunes, templeName,
@@ -73,6 +74,20 @@ const events = computed(() => selectedPlace.value
 const eraLink = computed(() => events.value.find((e) => e.era)?.era)
 const histLang = computed<'km' | 'en' | null>(() => detail.value?.history.km ? 'km' : detail.value?.history.en ? 'en' : null)
 const labelOf = (l: { km: string | null; en: string | null }) => l.km || l.en || ''
+// Every temple gets its period's history (or, undated, the general context);
+// see app/utils/temple-history.ts.
+const period = computed(() => selectedTemple.value ? periodOf(selectedTemple.value) : null)
+// Nearest curated landmark (skipping one at the same spot), for orientation.
+const nearby = computed(() => {
+  const t = selectedTemple.value
+  if (!t) return null
+  let best: { id: string; name: string; km: number } | null = null
+  for (const p of Object.values(PLACES)) {
+    const km = distanceKm(t.lat, t.lng, p.lat, p.lng)
+    if (km > 0.3 && (!best || km < best.km)) best = { id: p.id, name: p.name, km }
+  }
+  return best && best.km < 60 ? { ...best, label: khmerNum(best.km < 10 ? best.km.toFixed(1) : Math.round(best.km)) } : null
+})
 
 // ---------- my location ----------
 const me = ref<{ lat: number; lng: number } | null>(null)
@@ -268,9 +283,13 @@ function select(id: string, fly = true) {
   }
 }
 function closeCard() { selectedId.value = '' }
-watch(sel, () => { setData('selection', selectionGeo()); drawRoute() })
+// Keyed on the id: `sel` is recomputed whenever the filtered list changes, but
+// the marker only needs re-uploading when the selection itself changes.
+watch(() => sel.value?.id, () => { setData('selection', selectionGeo()); drawRoute() })
 watch(() => props.focus, (id) => { if (id && id !== selectedId.value) select(id) })
 watch(templeList, () => setData('temples', templeGeo()))
+// The /map page hides the featured pins while a filter is on.
+watch(() => props.places, () => { setData('featured', placeGeo()); setData('temples', templeGeo()) })
 watch(() => props.hoverId, (id) => { if (map?.getLayer('hover')) map.setFilter('hover', ['==', ['get', 'id'], id || '']) })
 watch(() => props.boundary, (f) => {
   setData('boundary', f ?? { type: 'FeatureCollection', features: [] })
@@ -529,14 +548,21 @@ onBeforeUnmount(() => {
                 <div v-if="detail.facts.period"><dt>សម័យ</dt><dd>{{ detail.facts.period }}</dd></div>
                 <div v-if="detail.facts.builder?.length"><dt>អ្នកកសាង</dt><dd>{{ detail.facts.builder.map(labelOf).join(' · ') }}</dd></div>
                 <div v-if="detail.facts.deity?.length"><dt>ឧទ្ទិសដល់</dt><dd>{{ detail.facts.deity.map(labelOf).join(' · ') }}</dd></div>
-                <div v-if="detail.facts.heritage?.length"><dt>ឋានៈ</dt><dd>{{ detail.facts.heritage.map(labelOf).join(' · ') }}</dd></div>
+                <div v-if="detail.facts.heritage?.length"><dt>ឋានៈ</dt><dd>{{ detail.facts.heritage.map(heritageLabel).join(' · ') }}</dd></div>
               </dl>
               <p v-if="detail?.facts.descKm || detail?.facts.descEn" class="c-note">{{ detail.facts.descKm || detail.facts.descEn }}</p>
               <div v-if="histLang" class="c-hist" :lang="histLang">
                 <p>{{ detail!.history[histLang]!.text }}</p>
                 <a :href="detail!.history[histLang]!.url" target="_blank" rel="noopener">{{ histLang === 'km' ? 'វិគីភីឌា' : 'Wikipedia (English)' }} ↗</a>
               </div>
-              <p v-else-if="detail" class="c-empty">មិនទាន់មានឯកសារប្រវត្តិសាស្ត្របើកចំហ សម្រាប់ប្រាសាទនេះនៅឡើយទេ — មានតែទីតាំង និងឈ្មោះពី OpenStreetMap។</p>
+              <section v-if="period" class="c-era" :class="{ undated: !period.dated }">
+                <h4><KhmerIcon name="book" :size="16" />{{ period.dated ? 'បរិបទប្រវត្តិសាស្ត្រ' : 'ប្រវត្តិ' }} · <b>{{ period.name }}</b><span>{{ period.range }}</span></h4>
+                <p>{{ period.text }}</p>
+                <NuxtLink :to="period.to">{{ period.to === '/timeline' ? 'មើលខ្សែប្រវត្តិសាស្ត្រ →' : 'អានសម័យកាលនេះ →' }}</NuxtLink>
+              </section>
+              <button v-if="nearby" class="c-near" @click="select(nearby.id)">
+                <KhmerIcon name="compass" :size="15" />ជិត <b>{{ nearby.name }}</b> · {{ nearby.label }} គ.ម
+              </button>
               <div v-if="detail" class="c-src">
                 <a v-if="detail.wikidata" :href="detail.wikidata" target="_blank" rel="noopener">Wikidata</a>
                 <a v-if="detail.osm" :href="detail.osm" target="_blank" rel="noopener">OpenStreetMap</a>
@@ -621,7 +647,7 @@ onBeforeUnmount(() => {
 .c-name{font-family:var(--title);font-size:1.2rem;line-height:1.8;color:var(--ivory)}
 .c-sub{font-family:var(--khmer);font-size:.78rem;line-height:1.8;color:var(--stone)}
 .c-path{display:flex;align-items:flex-start;gap:6px;font-family:var(--khmer);font-size:.8rem;line-height:1.9;color:var(--gold-2)}
-.c-path :deep(svg){flex:none;margin-top:6px}
+.c-path :deep(.kh-icon){flex:none;margin-top:6px}
 .c-facts{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;margin:0}
 .c-facts div{display:contents}
 .c-facts dt{font-family:var(--khmer);font-size:.76rem;line-height:1.9;color:var(--stone)}
@@ -631,7 +657,15 @@ onBeforeUnmount(() => {
 .c-hist p{font-family:var(--khmer);font-size:.84rem;line-height:2;color:var(--ivory-dim)}
 .c-hist[lang="en"] p{font-family:Georgia,serif;font-size:.9rem;line-height:1.65}
 .c-hist a,.c-src a{font-family:var(--khmer);font-size:.76rem;color:var(--gold-2)}
-.c-empty{font-family:var(--khmer);font-size:.8rem;line-height:1.9;color:var(--stone)}
+.c-era{border-radius:var(--r-md);padding:10px 12px;background:linear-gradient(135deg,rgba(212,175,55,.1),rgba(46,74,53,.35));border:1px solid rgba(212,175,55,.2)}
+.c-era h4{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;font-family:var(--khmer);font-weight:400;font-size:.76rem;line-height:1.9;color:var(--stone)}
+.c-era h4 b{font-family:var(--title);font-weight:400;font-size:.9rem;color:var(--gold-2)}
+.c-era h4 span{font-size:.72rem;color:var(--stone);margin-left:auto}
+.c-era p{font-family:var(--khmer);font-size:.82rem;line-height:2;color:var(--ivory-dim);margin-top:2px}
+.c-era a{font-family:var(--khmer);font-size:.76rem;color:var(--gold-2)}
+.c-near{display:flex;align-items:center;gap:6px;text-align:left;font-family:var(--khmer);font-size:.78rem;line-height:1.8;color:var(--ivory-dim);background:none;border:0;padding:0;cursor:pointer}
+.c-near b{font-weight:400;color:var(--gold-2)}
+.c-near:hover b{text-decoration:underline}
 .c-src{display:flex;gap:12px}
 .c-events{display:flex;flex-direction:column;gap:2px}
 .c-events span{font-family:var(--khmer);font-size:.8rem;line-height:1.85;color:var(--ivory-dim)}

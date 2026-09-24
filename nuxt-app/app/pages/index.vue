@@ -193,7 +193,8 @@ const stats = [
 .btn{display:inline-flex;align-items:center;gap:10px;font-family:var(--khmer);font-size:.95rem;line-height:1.9;letter-spacing:.04em;padding:12px 28px;border-radius:var(--r-pill);transition:background .3s var(--ease),border-color .3s,color .3s}
 .btn.primary{background:linear-gradient(180deg,var(--gold-2),var(--gold));color:var(--night);box-shadow:0 10px 30px rgba(212,175,55,.25)}
 .btn.primary:hover{background:var(--gold-2)}
-.btn.ghost{border:1px solid var(--gold-dim);color:var(--gold-2);background:rgba(12,20,16,.35);backdrop-filter:blur(6px)}
+/* no backdrop blur: behind it the Ken Burns photo and gold dust change every frame, so the blur would be recomputed every frame */
+.btn.ghost{border:1px solid var(--gold-dim);color:var(--gold-2);background:rgba(12,20,16,.55)}
 .btn.ghost:hover{border-color:var(--gold);background:rgba(212,175,55,.1)}
 .scroll-cue{position:absolute;bottom:30px;left:50%;translate:-50% 0;z-index:3;width:24px;height:40px;border:1px solid var(--gold-dim);border-radius:var(--r-md)}
 .scroll-cue span{position:absolute;left:50%;top:8px;width:3px;height:8px;margin-left:-1.5px;border-radius:var(--r-xs);background:var(--gold-2);animation:cue 2s ease-in-out infinite}
@@ -214,7 +215,7 @@ const stats = [
 .stats{padding:84px 0}
 .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
 .stat{text-align:center;padding:30px 16px;border:1px solid rgba(212,175,55,.12);border-radius:var(--r-md);background:radial-gradient(120% 100% at 50% 0%,rgba(46,74,53,.45),transparent 70%)}
-.stat :deep(svg){margin:0 auto 6px;color:var(--gold-2)}
+.stat :deep(.kh-icon){margin:0 auto 6px;color:var(--gold-2)}
 .stat-n{font-family:var(--title);font-size:clamp(2rem,4.4vw,3.2rem);line-height:1.9;color:var(--ivory)}
 .stat-l{font-family:var(--khmer);font-size:.88rem;color:var(--ivory-dim);line-height:1.9}
 @media(max-width:860px){.stat-grid{grid-template-columns:repeat(2,1fr)}}
