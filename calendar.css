@@ -1,0 +1,61 @@
+/* ============ CALENDAR PAGE ============ */
+
+/* ---- hero ---- */
+.cal-hero{position:relative;padding:150px 28px 70px;background:radial-gradient(1100px 480px at 50% 115%,var(--moss-2) 0%,var(--night) 72%);border-bottom:1px solid rgba(212,175,55,.14)}
+.cal-hero-inner{max-width:1180px;margin:0 auto}
+.cal-hero .kicker{font-family:var(--khmer);font-size:.8rem;letter-spacing:.14em;color:var(--gold-2);margin-bottom:14px}
+.cal-hero h1{font-family:var(--display);font-size:clamp(2rem,5vw,3.2rem);line-height:1.35;color:var(--ivory);letter-spacing:.02em}
+.cal-sub{font-family:var(--khmer);color:var(--ivory-dim);margin-top:16px;font-size:1rem;line-height:1.9;max-width:760px}
+
+/* ---- body ---- */
+.cal-body{padding:56px 0 96px}
+
+/* ---- toolbar ---- */
+.cal-toolbar{display:flex;align-items:center;gap:18px;margin-bottom:26px;flex-wrap:wrap}
+.cal-toolbar button{background:transparent;border:1px solid rgba(212,175,55,.35);color:var(--gold-2);font-family:var(--khmer);font-size:1.1rem;width:44px;height:44px;border-radius:8px;cursor:pointer;transition:background .3s,color .3s}
+.cal-toolbar button:hover{background:var(--gold);color:var(--night)}
+.cal-toolbar .today-btn{width:auto;padding:0 18px;font-size:.85rem}
+.cal-title-wrap{flex:1;min-width:260px}
+.cal-title{font-family:var(--display);font-size:1.5rem;color:var(--ivory);letter-spacing:.03em}
+.lunar-head{display:flex;gap:14px;align-items:baseline;flex-wrap:wrap;margin-top:8px}
+.lunar-head .lh-name{font-family:var(--khmer);color:var(--gold-2);font-size:1rem}
+.lunar-head .lh-be{font-family:var(--khmer);color:var(--ivory-dim);font-size:.85rem}
+.lunar-head .lh-type{font-family:var(--khmer);color:var(--stone-3);font-size:.75rem}
+.lunar-head .lh-month{font-family:var(--khmer);color:var(--stone);font-size:.85rem}
+
+/* ---- grid ---- */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:34px}
+.cal-hd{font-family:var(--khmer);font-size:.78rem;letter-spacing:.08em;color:var(--stone-3);text-align:center;padding:8px 0;border-bottom:1px solid rgba(212,175,55,.18)}
+.cal-cell{min-height:96px;background:linear-gradient(180deg,rgba(30,51,38,.55),rgba(20,36,27,.55));border:1px solid rgba(201,168,124,.14);border-radius:8px;padding:8px 10px;display:flex;flex-direction:column;gap:4px;transition:border-color .3s}
+.cal-cell:hover{border-color:var(--gold-dim)}
+.cal-cell.empty{background:transparent;border-color:transparent}
+.cal-cell.today{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 0 18px var(--gold-dim)}
+.cal-cell .g{font-family:var(--khmer);font-size:.95rem;color:var(--ivory)}
+.cal-cell .l{font-family:var(--khmer);font-size:.68rem;color:var(--stone);line-height:1.5}
+.cal-cell .ev{font-family:var(--khmer);font-size:.66rem;line-height:1.45;color:var(--night);border-radius:4px;padding:2px 6px;margin-top:auto}
+.cal-cell .ev.festival{background:var(--gold-2)}
+.cal-cell .ev.holiday{background:var(--water)}
+.cal-cell .ev.heritage{background:var(--stone-2)}
+@media(max-width:760px){
+  .cal-grid{grid-template-columns:repeat(7,1fr);gap:4px}
+  .cal-cell{min-height:64px;padding:5px 6px}
+  .cal-cell .l{font-size:.6rem}
+  .cal-cell .ev{font-size:.58rem;padding:1px 4px}
+  .cal-hd{font-size:.62rem}
+}
+
+/* ---- legend ---- */
+.cal-legend{display:flex;gap:26px;flex-wrap:wrap;padding:18px 0;border-top:1px solid rgba(212,175,55,.14);border-bottom:1px solid rgba(212,175,55,.14);margin-bottom:44px}
+.cal-legend .lg{display:flex;align-items:center;gap:9px;font-family:var(--khmer);font-size:.8rem;color:var(--ivory-dim)}
+.cal-legend .dot{width:12px;height:12px;border-radius:3px;display:inline-block}
+.cal-legend .dot.festival{background:var(--gold-2)}
+.cal-legend .dot.holiday{background:var(--water)}
+.cal-legend .dot.heritage{background:var(--stone-2)}
+.cal-legend .dot.today{background:transparent;border:2px solid var(--gold)}
+
+/* ---- notes ---- */
+.cal-notes h2{font-family:var(--display);font-size:1.2rem;color:var(--gold-2);margin-bottom:14px;letter-spacing:.03em}
+.cal-notes p{font-family:var(--khmer);color:var(--ivory-dim);font-size:.92rem;line-height:2;margin-bottom:12px;max-width:860px}
+
+/* ---- active nav ---- */
+nav a.active{color:var(--gold-2)}

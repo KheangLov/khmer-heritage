@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>អង្គរ — បេតិកភណ្ឌរស់រវើក</title>
+<meta name="description" content="ដំណើររំកិលឆ្លងកាត់ប្រវត្តិសាស្ត្រខ្មែរជាង ២០០០ ឆ្នាំ — ពីជាងស្មូនដំបូងនៅឡាងស្ពាន រហូតដល់អ្នករបាំនាសព្វថ្ងៃ។">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Moul&family=Noto+Serif+Khmer:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div id="topbar"><i id="topbar-fill"></i></div>
+
+<!-- ============ NAV ============ -->
+<header id="header">
+  <a class="brand" href="#hero">
+    <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 4 L24 12 L20 20 L16 12 Z"/><path d="M8 20 L14 26 L20 20 L26 26 L32 20"/><path d="M12 26 L16 34 L20 26 L24 34 L28 26"/><path d="M20 20 L20 26"/></svg>
+    អង្គរ
+  </a>
+  <nav>
+    <a href="#intro">ទឹកដី</a>
+    <a href="#timeline">ដំណើរ</a>
+    <a href="#living">បេតិកភណ្ឌរស់</a>
+    <a href="#unesco">យូណេស្កូ</a>
+    <a href="calendar.html">ប្រតិទិន</a>
+  </nav>
+</header>
+
+<main>
+
+<!-- ============ HERO ============ -->
+<section id="hero">
+  <div class="mist"><span></span><span></span><span></span></div>
+
+  <div class="khmer-title">អង្គរ</div>
+  <h1>បេតិកភណ្ឌរស់រវើក</h1>
+  <p class="sub">ពីជាងស្មូនដំបូងនៅរូងភ្នំឡាងស្ពាន រហូតដល់អ្នករបាំនាសព្វថ្ងៃ ·<br>ប្រវត្តិសាស្ត្រជាង ២០០០ ឆ្នាំ ក្នុងការរំកិលតែមួយ</p>
+
+  <!-- Churning of the Ocean of Milk -->
+  <svg id="churning" viewBox="0 0 760 190" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <defs>
+      <linearGradient id="gGold" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#8A6A45"/><stop offset=".5" stop-color="#E8C96A"/><stop offset="1" stop-color="#8A6A45"/>
+      </linearGradient>
+    </defs>
+    <!-- mountain -->
+    <path d="M380 150 L380 96 M380 96 L356 122 M380 96 L404 122" stroke="#C9A87C" stroke-width="2" opacity=".7"/>
+    <!-- rope (naga) -->
+    <path class="rope" d="M120 118 C 200 96, 260 140, 340 118 C 420 96, 480 140, 560 118 C 620 104, 660 112, 700 118" stroke="url(#gGold)" stroke-width="3"/>
+    <!-- gods (left) -->
+    <g class="fig" stroke="#F2E8D5" stroke-width="1.6" opacity=".9">
+      <path d="M96 118 L96 84 M96 84 L88 96 M96 84 L104 96 M96 96 L88 108 M96 96 L104 108"/>
+      <path d="M64 118 L64 92 M64 92 L56 102 M64 92 L72 102 M64 102 L56 112 M64 102 L72 112"/>
+      <path d="M34 118 L34 88 M34 88 L26 100 M34 88 L42 100 M34 100 L26 110 M34 100 L42 110"/>
+    </g>
+    <!-- demons (right) -->
+    <g class="fig r" stroke="#B08D5F" stroke-width="1.6" opacity=".9">
+      <path d="M664 118 L664 84 M664 84 L656 96 M664 84 L672 96 M664 96 L656 108 M664 96 L672 108"/>
+      <path d="M696 118 L696 92 M696 92 L688 102 M696 92 L704 102 M696 102 L688 112 M696 102 L704 112"/>
+      <path d="M726 118 L726 88 M726 88 L718 100 M726 88 L734 100 M726 100 L718 110 M726 100 L734 110"/>
+    </g>
+    <!-- apsaras -->
+    <g stroke="#E8C96A" stroke-width="1.4" opacity=".75">
+      <path d="M300 66 C 310 56, 322 56, 330 64 M300 66 C 292 58, 282 60, 278 68 M330 64 C 338 70, 340 78, 336 84"/>
+      <path d="M430 66 C 420 56, 408 56, 400 64 M430 66 C 438 58, 448 60, 452 68 M400 64 C 392 70, 390 78, 394 84"/>
+    </g>
+    <!-- waves -->
+    <path d="M0 150 C 60 142, 120 158, 180 150 C 240 142, 300 158, 360 150 C 420 142, 480 158, 540 150 C 600 142, 660 158, 720 150 L 760 150" stroke="#7FA8A0" stroke-width="1.4" opacity=".5"/>
+    <path d="M0 164 C 80 158, 160 170, 240 164 C 320 158, 400 170, 480 164 C 560 158, 640 170, 720 164 L 760 164" stroke="#7FA8A0" stroke-width="1.2" opacity=".3"/>
+  </svg>
+
+  <div class="scroll-cue">រំកិលចុះក្រោម ដើម្បីចាប់ផ្តើមដំណើរ<div class="chev"></div></div>
+</section>
+
+<!-- ============ INTRO ============ -->
+<section id="intro">
+  <div class="wrap">
+    <div class="kicker">ទឹកដី</div>
+    <h2>រវាងទន្លេធំ និងបឹងធំ អរិយធម៌មួយបានឆ្លាក់ព្រលឹងរបស់ខ្លួនទៅក្នុងថ្ម — <em>ហើយមិនដែលរសាត់បាត់ឡើយ។</em></h2>
+    <p class="lead">ទន្លេមេគង្គនាំខ្យល់មូសុងមកទិសខាងត្បូង។ បឹងទន្លេសាប — បឹងធំ — បញ្ច្រាសទិសដៅលំហូររបស់វារៀងរាល់ឆ្នាំ ធ្វើឲ្យវាលទំនាបពោរពេញដោយជីវិត។ នៅលើទឹកដីដ៏ពិសិដ្ឋនេះ ប្រជាជនខ្មែរបានកសាងសំណង់សាសនាធំជាងគេបំផុតនៅលើផែនដី បានបង្កើតអក្សរមួយក្នុងចំណោមអក្សរចំណាស់ជាងគេដែលនៅរស់ ហើយបានរាំថ្វាយព្រះអស់រយៈពេលជាងមួយពាន់ឆ្នាំ។</p>
+    <div class="stats">
+      <div class="stat"><b>៦២៩</b><span>ឆ្នាំនៃអាណាចក្រ</span></div>
+      <div class="stat"><b>១២០០ ម៉ែត្រការ៉េ</b><span>នៃចម្លាក់លៀនស្រាល</span></div>
+      <div class="stat"><b>៧</b><span>ការចុះបញ្ជីយូណេស្កូ</span></div>
+      <div class="stat"><b>១០០០+</b><span>ឆ្នាំនៃរបាំបុរាណ</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TIMELINE ============ -->
+<section id="timeline">
+  <div class="spine"></div>
+  <div class="spine-fill" id="spine-fill"></div>
+
+  <div class="head">
+    <div class="kicker">ដំណើរឆ្លងកាត់សម័យកាល</div>
+    <h2>សម័យកាលដប់ប្រាំ ខ្សែស្រឡាយតែមួយមិនដាច់</h2>
+    <p>រំកិលដើម្បីធ្វើដំណើរ។ ចំណតនីមួយៗគឺជាជំពូកឆ្លាក់ពីថ្ម — មើលខ្សែស្រឡាយមាសនៃប្រវត្តិសាស្ត្របំពេញឆ្អឹងខ្នង ពេលអ្នកចុះទៅក្រោម។</p>
+  </div>
+
+  <div class="wrap" id="eras">
+
+    <article class="era" data-era="0">
+      <div class="node"><svg viewBox="0 0 46 46" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="23" cy="23" r="9"/><circle cx="23" cy="23" r="3.4" fill="currentColor" stroke="none"/></svg></div>
+      <div class="grid">
+        <div class="visual">
+          <svg viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
+            <defs><linearGradient id="v1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3A2A1A"/><stop offset="1" stop-color="#14241B"/></linearGradient></defs>
+            <rect width="400" height="300" fill="url(#v1)"/>
+            <circle cx="330" cy="70" r="34" fill="#E8C96A" opacity=".5"/>
+            <circle cx="330" cy="70" r="46" fill="none" stroke="#E8C96A" stroke-width="1" opacity=".3"/>
+            <path d="M0 300 L60 190 L120 300 Z" fill="#0C1410" opacity=".8"/>
+            <path d="M60 190 L60 120 M60 120 L48 140 M60 120 L72 140" stroke="#C9A87C" stroke-width="2.4"/>
+            <path d="M120 300 L170 210 L220 300 Z" fill="#0C1410" opacity=".8"/>
+            <path d="M170 210 L170 150 M170 150 L160 166 M170 150 L180 166" stroke="#C9A87C" stroke-width="2.2"/>
+            <path d="M40 300 C 90 280, 150 296, 200 300" stroke="#7FA8A0" stroke-width="1.4" opacity=".5"/>
+            <path d="M150 262 L158 250 M158 250 L166 262 M158 250 L158 240" stroke="#E8C96A" stroke-width="1.4" opacity=".7"/>
+            <path d="M230 268 L236 258 M236 258 L242 268 M236 258 L236 250" stroke="#E8C96A" stroke-width="1.4" opacity=".6"/>
+          </svg>
+          <div class="vignette"></div>
+          <div class="tag">រូងភ្នំឡាងស្ពាន · បាត់ដំបង</div>
+        </div>
+        <div class="text">
+          <div class="year">ប្រហែល ៦០០០ មុនគ.ស.</div>
+          <div class="khmer">Dawn</div>
+          <a class="era-link" href="pages/era-0.html"><h3>ព្រឹកព្រលឹម</h3></a>
+          <p>នៅក្នុងរូងភ្នំឡាងស្ពាន បុព្វបុរសខ្មែរដំបូងបានសូនគ្រឿងស្មូន និងឧបករណ៍ថ្ម។ អរិយធម៌មួយចាប់ផ្តើម មុនពេលប្រវត្តិសាស្ត្រត្រូវបានសរសេរ — ដៃរបស់ពួកគេបានរៀនពីការអត់ធ្មត់នៃដីឥដ្ឋ។</p>
+          <a class="read-more" href="pages/era-0.html">អានបន្ថែម →</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="era" data-era="1">
+      <div class="node"><svg viewBox="0 0 46 46" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M23 8 C 30 14, 30 22, 23 28 C 16 22, 16 14, 23 8 Z"/><path d="M23 28 L23 38"/></svg></div>
+      <div class="grid">
+        <div class="visual">
+          <img src="images/era-funan.jpg" alt="ប្រាសាទបាក់បែកនៅអង្គរបូរី រាជធានីសម័យនគរភ្នំ" loading="lazy">
+          <div class="vignette"></div>
+          <div class="tag">អង្គរបូរី · តាកែវ</div>
+        </div>
+        <div class="text">
+          <div class="year">សតវត្សទី១ – ទី៦ គ.ស.</div>
+          <div class="khmer">Funan</div>
+          <a class="era-link" href="pages/era-1.html"><h3>នគរភ្នំ — នគរដំបូង</h3></a>
+          <p>នគរដំបូងក្រោកឡើងនៅតំបន់ដីសណ្តទន្លេមេគង្គ៖ រដ្ឋសមុទ្រដែលទទួលឥទ្ធិពលឥណ្ឌា ជួញដូរសូត្រ មាស និងគ្រឿងទេស។ រឿងព្រេងរបស់ព្រះថោង និងនាងនាគកើតនៅទីនេះ — រឿងដើមរបស់ប្រជាជនខ្មែរ។</p>
+          <a class="read-more" href="pages/era-1.html">អានបន្ថែម →</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="era" data-era="2">
+      <div class="node"><svg viewBox="0 0 46 46" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="14" y="18" width="18" height="20" rx="2"/><path d="M14 22 L23 12 L32 22"/><path d="M19 38 L19 26 M23 38 L23 26 M27 38 L27 26"/></svg></div>
+      <div class="grid">
+        <div class="visual">
+          <img src="images/era-chenla.jpg" alt="ប៉មប្រាសាទឥដ្ឋនៅសម្បូរព្រៃគុក រាជធានីឦសានបុរៈនៃចេនឡា" loading="lazy">
+          <div class="vignette"></div>
+          <div class="tag">សម្បូរព្រៃគុក · កំពង់ធំ</div>
+        </div>
+        <div class="text">
+          <div class="year">សតវត្សទី៦ – ទី៨</div>
+          <div class="khmer">Chenla</div>
+          <a class="era-link" href="pages/era-2.html"><h3>ចេនឡា — កំណើតនៃអក្សរសាស្ត្រ</h3></a>
+          <p>អំណាចផ្លាស់ទីចូលទ្វីប។ នៅឦសានបុរៈ — សម្បូរព្រៃគុកសព្វថ្ងៃ — ប្រាសាទឥដ្ឋ ១៨៦ ក្រោកឡើង ក្នុងនោះដប់មានប៉មប្រាំបីជ្រុងដែលរកមិនឃើញនៅកន្លែងណាផ្សេង។ ហើយអក្សរខ្មែរក៏លេចរូបរាង៖ ជាអក្សរមួយក្នុងចំណោមអក្សរចំណាស់ជាងគេដែលនៅរស់នៅលើផែនដី។</p>
+          <a class="read-more" href="pages/era-2.html">អានបន្ថែម →</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="era" data-era="3">
+      <div class="node"><svg viewBox="0 0 46 46" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M23 6 L27 16 L23 26 L19 16 Z"/><path d="M10 26 L16 34 L23 26 L30 34 L36 26"/></svg></div>
+      <div class="grid">
+        <div class="visual">
+          <img src="images/era-kulen.jpg" alt="ភ្នំគូលែន ភ្នំពិសិដ្ឋដែលព្រះបាទជយវម៌្មទី២ ត្រូវបានរាជាភិសេក" loading="lazy">
+          <div class="vignette"></div>
+          <div class="tag">ភ្នំគូលែន · គ.ស. ៨០២</div>
+        </div>
+        <div class="text">
+          <div class="year">គ.ស. ៨០២</div>
+          <div class="khmer">The Empire Is Born</div>
+          <a class="era-link" href="pages/era-3.html"><h3>កំណើតនៃអាណាចក្រ</h3></a>
+          <p>នៅលើភ្នំពិសិដ្ឋគូលែន ព្រះបាទជយវម៌្មទី២ ត្រូវបានរាជាភិសេកជាស្តេចចក្រវាទ្នី។ អាណាចក្រខ្មែរចាប់ផ្តើមរជ្ជកាល ៦២៩ ឆ្នាំ ដែលជាអាណាចក្រយូរអង្វែងជាងគេបំផុតក្នុងប្រវត្តិសាស្ត្រអាស៊ីអាគ្នេយ៍។</p>
+          <a class="read-more" href="pages/era-3.html">អានបន្ថែម →</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="era" data-era="4">
+      <div class="node"><svg viewBox="0 0 46 46" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M23 8 L30 20 L23 32 L16 20 Z"/><path d="M12 32 L18 40 L23 32 L28 40 L34 32"/></svg></div>
+      <div class="grid">
+        <div class="visual">
+          <img src="images/era-bakong.jpg" alt="ប្រាសាទភ្នំបាគងនៅរលួស" loading="lazy">
+          <div class="vignette"></div>
+          <div class="tag">រលួស · យសោធរបុរៈ</div>
+        </div>
+        <div class="text">
+          <div class="year">គ.ស. ៨៧៧ – ៩១០</div>
+          <div class="khmer">Temple-Mountains</div>
+          <a class="era-link" href="pages/era-4.html"><h3>ភ្នំប្រាសាទដំបូង</h3></a>
+          <p>បាគង និងភ្នំបាខែង ក្រោកឡើងពីវាលទំនាប៖ ជារូបចម្លងថ្មនៃភ្នំព្រះសុមេរុ លំនៅរបស់ទេវតា ព័ទ្ធជុំវិញដោយគូទឹកដែលឆ្លុះបញ្ចាំងមហាសមុទ្រលោកធាតុ។ ខ្មែរបានរៀនសាងសង់ដោយថ្ម — ហើយពួកគេនឹងមិនឈប់ទៀតឡើយ។</p>
+          <a class="read-more" href="pages/era-4.html">អានបន្ថែម →</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="era" data-era="5">
+      <div class="node"><svg viewBox="0 0 46 46" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M23 8 C 29 14, 29 22, 23 28 C 17 22, 17 14, 23 8 Z"/><path d="M23 28 L23 38"/><path d="M14 20 L32 20" opacity=".6"/></svg></div>
+      <div class="grid">
+        <div class="visual">
+          <img src="images/era-banteay-srei.jpg" alt="ចម្លាក់ដ៏ឆ្ងាញ់ពិសិដ្ឋនៃបន្ទាយស្រី បន្ទាយនៃស្ត្រី" loading="lazy">
+          <div class="vignette"></div>
+          <div class="tag">បន្ទាយស្រី · គ.ស. ៩៦៧</div>
+        </div>
+        <div class="text">
+          <div class="year">គ.ស. ៩៦៧</div>
+          <div class="khmer">Banteay Srei</div>
+          <a class="era-link" href="pages/era-5.html"><h3>បន្ទាយស្រី — ត្បូងនៃសិល្បៈ</h3></a>
+          <p>«បន្ទាយស្រី»៖ ប្រាសាទឆ្លាក់ពីថ្មភក់ពណ៌ផ្កាឈូក ជញ្ជាំងរបស់វាពោរពេញដោយរឿងទេវកថា។ អ្នកប្រាជ្ញហៅវាថាជាស្នាដៃថ្មដ៏ល្អបំផុតដែលដៃខ្មែរធ្លាប់បង្កើត — ឆ្ងាញ់ដូចក្រណាត់សូត្រ អស់កល្បដូចថ្ម។</p>
+          <a class="read-more" href="pages/era-5.html">អានបន្ថែម →</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="era" data-era="6">
+      <div class="node"><svg viewBox="0 0 46 46" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M23 4 L27 12 L23 20 L19 12 Z"/><path d="M12 20 L17 28 L23 20 L29 28 L34 20"/><path d="M17 28 L20 36 L23 28 L26 36 L29 28"/></svg></div>
+      <div class="grid">
+        <div class="visual">
+          <img src="images/era-angkor-wat.jpg" alt="អង្គរវត្ត សំណង់សាសនាធំជាងគេបំផុតនៅលើផែនដី" loading="lazy">
+          <div class="vignette"></div>
+          <div class="tag">អង្គរវត្ត · គ.ស. ១១១៣–១១៥០</div>
+        </div>
+        <div class="text">
+          <div class="year">គ.ស. ១១១៣ – ១១៥០</div>
+          <div class="khmer">Angkor Wat</div>
+          <a class="era-link" href="pages/era-6.html"><h3>អង្គរវត្ត — ប្រាសាទលោកធាតុ</h3></a>
+          <p>ព្រះបាទសូរ្យវរ្ម័នទី២ កសាងសំណង់សាសនាធំជាងគេបំផុតនៅលើផែនដី។ ចម្លាក់លៀនស្រាល ១២០០ ម៉ែត្រការ៉េ រៀបរាប់រឿងកូរសមុទ្រទឹកដោះ ហើយប៉មផ្កាឈូកទាំងប្រាំរបស់វាក្លាយជាព្រលឹងនៃប្រជាជាតិ — នៅលើទង់ជាតិរហូតដល់សព្វថ្ងៃ។</p>
+          <a class="read-more" href="pages/era-6.html">អានបន្ថែម →</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="era" data-era="7">
+      <div class="node"><svg viewBox="0 0 46 46" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="12" y="14" width="22" height="24" rx="3"/><path d="M23 14 L23 8 M23 8 L19 12 M23 8 L27 12"/><path d="M18 26 L23 21 L28 26" opacity=".7"/></svg></div>
+      <div class="grid">
+        <div class="visual">
+          <img src="images/era-bayon.jpg" alt="មុខថ្មញញឹមស្ងប់ស្ងាត់នៃបាយ័ននៅអង្គរធំ" loading="lazy">
+          <div class="vignette"></div>
+          <div class="tag">អង្គរធំ · បាយ័ន</div>
+        </div>
+        <div class="text">
+          <div class="year">គ.ស. ១១៨១ – ១២១៨</div>
+          <div class="khmer">Angkor Thom</div>
+          <a class="era-link" href="pages/era-7.html"><h3>អង្គរធំ និងប្រាសាទបាយ័ន</h3></a>
+          <p>ព្រះបាទជយវម៌្មទី៧ — ស្តេចអ្នកសាងសង់ដ៏អស្ចារ្យ — លើករាជធានីដែលមានកំពែង និងប្រាសាទបាយ័ន ដែលមុខញញឹមស្ងប់ស្ងាត់ ២១៦ កំពុងមើលថែពិភពលោក។ ជញ្ជាំងរបស់វាបង្ហាញមិនត្រឹមតែសមរភូមិទេ ប៉ុន្តែជីវិតប្រចាំថ្ងៃរបស់អ្នកភូមិ៖ ផ្សារ ការនេសាទ ការចម្អិន ការសើច។</p>
+          <a class="read-more" href="pages/era-7.html">អានបន្ថែម →</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="era" data-era="8">
+      <div class="node"><svg viewBox="0 0 46 46" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="12" y="10" width="22" height="28" rx="2"/><path d="M12 18 L34 18 M12 26 L34 26"/><path d="M23 10 L23 6 M23 6 L20 9 M23 6 L26 9"/></svg></div>
+      <div class="grid">
+        <div class="visual">
+          <img src="images/era-zhou.jpg" alt="ឆ្លាក់រូបច្រកចូលខាងលិចអង្គរវត្តសតវត្សទី១៩ កំណត់ត្រាអំពីប្រាសាទ" loading="lazy">
+          <div class="vignette"></div>
+          <div class="tag">ចូវដាក្វាន់ · គ.ស. ១២៩៦</div>
+        </div>
+        <div class="text">
+          <div class="year">គ.ស. ១២៩៦</div>
+          <div class="khmer">The Last Eyewitness</div>
+          <a class="era-link" href="pages/era-8.html"><h3>សាក្សីចុងក្រោយ</h3></a>
+          <p>ទូតចិនម្នាក់ ឈ្មោះចូវដាក្វាន់ រស់នៅក្នុងទីក្រុងមាសអស់មួយឆ្នាំ ហើយសរសេរកំណត់ត្រាផ្ទាល់ភ្នែកតែមួយគត់អំពីជីវិតប្រចាំថ្ងៃនៅអង្គរ — ផ្សារ ពិធីបុណ្យ ស្តេច។ ពាក្យរបស់គាត់គឺជាអ្វីដែលនៅសល់ពីទីក្រុងដ៏រស់រវើក។</p>
+          <a class="read-more" href="pages/era-8.html">អានបន្ថែម →</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="era" data-era="9">
+      <div class="node"><svg viewBox="0 0 46 46" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M23 6 L27 14 L23 22 L19 14 Z"/><path d="M12 22 L17 30 L23 22 L29 30 L34 22"/><path d="M8 30 L12 38 L16 30 M30 30 L34 38 L38 30" opacity=".6"/></svg></div>
+      <div class="grid">
+        <div class="visual">
+          <img src="images/era-ta-prohm.jpg" alt="វល្លិព្រៃលេបត្របាក់តាព្រហ្ម ប្រាសាទដែលព្រៃយកមកវិញ" loading="lazy">
+          <div class="vignette"></div>
+          <div class="tag">គ.ស. ១៤៣១</div>
+        </div>
+        <div class="text">
+          <div class="year">គ.ស. ១៤៣១</div>
+          <div class="khmer">The Fall</div>
+          <a class="era-link" href="pages/era-9.html"><h3>ការដួលរលំនៃអង្គរ</h3></a>
+          <p>អង្គរត្រូវបានវាយដណ្តើមដោយអយុធ្យា ហើយបោះបង់ចោលឲ្យព្រៃលេបត្របាក់។ អាណាចក្របញ្ចប់; ការចងចាំនៅតែស្ថិតស្ថេរ។ អស់រយៈពេលបួនសតវត្ស ទីក្រុងដ៏អស្ចារ្យដេកលក់ក្រោមវល្លិ — រង់ចាំ។</p>
+          <a class="read-more" href="pages/era-9.html">អានបន្ថែម →</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="era" data-era="10">
+      <div class="node"><svg viewBox="0 0 46 46" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 34 L14 20 C 14 14, 20 12, 23 16 C 26 12, 32 14, 32 20 L32 34 Z"/><path d="M18 34 L18 24 M23 34 L23 22 M28 34 L28 24"/></svg></div>
+      <div class="grid">
+        <div class="visual">
+          <img src="images/era-reamker.jpg" alt="ផ្ទាំងគំនូរព្រះបរមរាជវាំងបង្ហាញឈុតឆាកពីមហាកំណាព្យរាមកេរ្តិ៍" loading="lazy">
+          <div class="vignette"></div>
+          <div class="tag">មហាកំណាព្យជាតិ</div>
+        </div>
+        <div class="text">
+          <div class="year">សតវត្សទី១៦ – ទី១៧</div>
+          <div class="khmer">The Reamker</div>
+          <a class="era-link" href="pages/era-10.html"><h3>រាមកេរ្តិ៍ — មហាកំណាព្យជាតិ</h3></a>
+          <p>មហាកំណាព្យជាតិត្រូវបាននិពន្ធ — រាមាយណៈរបស់ខ្មែរ — ត្បាញប្រាជ្ញាព្រះពុទ្ធសាសនាចូលក្នុងរឿងព្រះរាម និងនាងសីតា។ វាហូរចូលទៅក្នុងរបាំ ល្ខោនស្រមោល និងផ្ទាំងគំនូរព្រះបរមរាជវាំង៖ រឿងរបស់ខ្មែរ និទានដោយសំឡេងរបស់ខ្មែរផ្ទាល់។</p>
+          <a class="read-more" href="pages/era-10.html">អានបន្ថែម →</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="era" data-era="11">
+      <div class="node"><svg viewBox="0 0 46 46" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="23" cy="16" r="7"/><path d="M23 23 L23 34 M23 27 L15 34 M23 27 L31 34"/></svg></div>
+      <div class="grid">
+        <div class="visual">
+          <img src="images/era-rediscovery.jpg" alt="អង្គរវត្តថតនៅឆ្នាំ ១៩០០–១៩១០ ក្នុងអំឡុងពេលរកឃើញឡើងវិញ" loading="lazy">
+          <div class="vignette"></div>
+          <div class="tag">គ.ស. ១៨៦៣ – ១៩៥៣</div>
+        </div>
+        <div class="text">
+          <div class="year">គ.ស. ១៨៦៣ – ១៩៥៣</div>
+          <div class="khmer">Rediscovery</div>
+          <a class="era-link" href="pages/era-11.html"><h3>ការរកឃើញឡើងវិញ</h3></a>
+          <p>ក្រោមអាណាព្យាបាលបារាំង ព្រៃត្រូវបានឈូសឆាយ ហើយអង្គរត្រូវបានសិក្សា ជួសជុល និងផ្តល់ឲ្យពិភពលោក។ យក្សដែលកំពុងដេកលក់ភ្ញាក់ឡើង — ហើយពិភពលោកបានស្គាល់ឈ្មោះខ្មែរ។</p>
+          <a class="read-more" href="pages/era-11.html">អានបន្ថែម →</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="era" data-era="12">
+      <div class="node"><svg viewBox="0 0 46 46" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="23" cy="18" r="8"/><path d="M23 26 L23 38 M23 30 L15 38 M23 30 L31 38"/><path d="M14 18 L10 14 M32 18 L36 14" opacity=".7"/></svg></div>
+      <div class="grid">
+        <div class="visual">
+          <img src="images/era-apsara.jpg" alt="អ្នករបាំបុរាណខ្មែរកំពុងសម្តែងរបាំអប្សរា" loading="lazy">
+          <div class="vignette"></div>
+          <div class="tag">គ.ស. ១៩៥៣ · ការរស់ឡើងវិញនៃអប្សរា</div>
+        </div>
+        <div class="text">
+          <div class="year">គ.ស. ១៩៥៣</div>
+          <div class="khmer">Independence</div>
+          <a class="era-link" href="pages/era-12.html"><h3>ឯករាជ្យ និងការរស់ឡើងវិញនៃរបាំអប្សរា</h3></a>
+          <p>កម្ពុជាមានសេរីភាព។ ព្រះមហេសីកុសមៈ បង្កើតរបាំអប្សរាឡើងវិញពីចម្លាក់លៀនស្រាលនៃអង្គរវត្ត ហើយអ្នករបាំសួគ៌ាចេញពីថ្ម — មាស ឆើតឆាយ រស់រវើក។</p>
+          <a class="read-more" href="pages/era-12.html">អានបន្ថែម →</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="era dark" data-era="13">
+      <div class="node"><svg viewBox="0 0 46 46" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M23 8 C 29 14, 29 24, 23 30 C 17 24, 17 14, 23 8 Z"/><path d="M23 30 L23 38"/><path d="M23 34 L19 38 M23 34 L27 38" opacity=".6"/></svg></div>
+      <div class="grid">
+        <div class="visual">
+          <img src="images/era-tuol-sleng.jpg" alt="សារមន្ទីរឧក្រិដ្ឋកម្មប្រល័យពូជសាសន៍ទួលស្លែង អតីតពន្ធនាគារ S-21" loading="lazy">
+          <div class="vignette"></div>
+          <div class="tag">គ.ស. ១៩៧៥ – ១៩៧៩</div>
+        </div>
+        <div class="text">
+          <div class="year">គ.ស. ១៩៧៥ – ១៩៧៩</div>
+          <div class="khmer">The Dark Years</div>
+          <a class="era-link" href="pages/era-13.html"><h3>គ្រាងងឹត</h3></a>
+          <p>របបខ្មែរក្រហមបានឆក់យកជីវិតប្រជាជនជិតមួយភាគបួននៃប្រជាជាតិ — និងស្ទើរតែទាំងអស់នៃសិល្បករ។ របាំព្រះរាជទ្រព្យ «ស្ទើរតែរលាយបាត់»។ យើងរំលឹកពួកគេនៅទីនេះ ដោយការគោរព និងដោយការសន្យាថាសិល្បៈរបស់ពួកគេមិនបាត់បង់ដោយឥតប្រយោជន៍ឡើយ។</p>
+          <a class="read-more" href="pages/era-13.html">អានបន្ថែម →</a>
+        </div>
+      </div>
+    </article>
+
+    <article class="era" data-era="14">
+      <div class="node"><svg viewBox="0 0 46 46" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M23 38 C 14 30, 12 20, 23 10 C 34 20, 32 30, 23 38 Z"/><path d="M23 38 C 18 32, 17 26, 23 20 C 29 26, 28 32, 23 38 Z" opacity=".7"/></svg></div>
+      <div class="grid">
+        <div class="visual">
+          <img src="images/era-revival.jpg" alt="ថ្ងៃរះលើអង្គរវត្ត និមិត្តរូបនៃការរស់ឡើងវិញរបស់កម្ពុជា" loading="lazy">
+          <div class="vignette"></div>
+          <div class="tag">គ.ស. ១៩៩២ – ២០២៥ · យូណេស្កូ</div>
+        </div>
+        <div class="text">
+          <div class="year">គ.ស. ១៩៩២ – ២០២៥</div>
+          <div class="khmer">Revival</div>
+          <a class="era-link" href="pages/era-14.html"><h3>ការរស់ឡើងវិញ</h3></a>
+          <p>អង្គរត្រូវបានចុះបញ្ជីដោយយូណេស្កូ។ អ្នករបាំត្រឡប់មកឆាកវិញ។ បេតិកភណ្ឌអរូបីចំនួនប្រាំពីរត្រូវបានគោរព។ វប្បធម៌រស់នៅ — អត់ធ្មត់ ភ្លឺស្វាង មិនដាច់។ ដំណើរបន្តទៅមុខទៀត។</p>
+          <a class="read-more" href="pages/era-14.html">អានបន្ថែម →</a>
+        </div>
+      </div>
+    </article>
+
+  </div>
+</section>
+
+<!-- ============ LIVING HERITAGE ============ -->
+<section id="living">
+  <div class="wrap">
+    <div class="head">
+      <div class="kicker">បេតិកភណ្ឌរស់</div>
+      <h2>អ្វីដែលខ្មែរបន្តពីមួយជំនាន់ទៅមួយជំនាន់</h2>
+      <p>មិនមែនជាវត្ថុបុរាណទេ — សិល្បៈរស់ ដែលត្រូវបានអនុវត្ត បង្រៀន និងរាំនៅសព្វថ្ងៃនេះ។</p>
+    </div>
+    <div class="cards">
+
+      <div class="card">
+        <div class="photo"><img src="images/era-apsara.jpg" alt="អ្នករបាំព្រះរាជទ្រព្យក្នុងសំលៀកបំពាក់មាស" loading="lazy">
+        </div>
+        <svg class="icon" viewBox="0 0 52 52" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="26" cy="20" r="9"/><path d="M26 29 L26 44 M26 33 L17 44 M26 33 L35 44"/><path d="M15 20 L9 15 M37 20 L43 15"/></svg>
+        <a class="era-link" href="pages/apsara.html"><h3>របាំព្រះរាជទ្រព្យ និងអប្សរា</h3></a>
+        <div class="kh">Royal Ballet & Apsara</div>
+        <p>កាយវិការដៃដ៏ឆើតឆាយ និងមកុដមាស — អ្នករបាំសួគ៌ាដែលរាំតាមចង្វាក់រាជវាំងអស់រយៈពេលជាងមួយពាន់ឆ្នាំ។</p>
+        <span class="badge">យូណេស្កូ ២០០៨</span>
+        <a class="read-more" href="pages/apsara.html">អានបន្ថែម →</a>
+      </div>
+
+      <div class="card">
+        <div class="photo"><img src="images/card-sbek-thom.jpg" alt="អាយ៉ងស្បែកល្ខោនស្រមោល" loading="lazy">
+        </div>
+        <svg class="icon" viewBox="0 0 52 52" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="10" y="14" width="32" height="26" rx="3"/><path d="M10 22 L26 30 L42 22"/><path d="M26 30 L26 40"/><circle cx="26" cy="18" r="3"/></svg>
+        <a class="era-link" href="pages/sbek-thom.html"><h3>ល្ខោនស្រមោលស្បែកធំ</h3></a>
+        <div class="kh">Sbek Thom — Shadow Theatre</div>
+        <p>អាយ៉ងស្បែកយក្សបញ្ចាំងវីរជន និងយក្សរបស់រាមកេរ្តិ៍ប្រឆាំងនឹងពន្លឺភ្លើង — មហាកំណាព្យនិទានតាមរយៈស្រមោល។</p>
+        <span class="badge">យូណេស្កូ ២០០៨</span>
+        <a class="read-more" href="pages/sbek-thom.html">អានបន្ថែម →</a>
+      </div>
+
+      <div class="card">
+        <div class="photo"><img src="images/card-lbokator.jpg" alt="អ្នកគុនល្បុក្កតោ រូបថតទសវត្សរ៍ឆ្នាំ ១៩២០" loading="lazy">
+        </div>
+        <svg class="icon" viewBox="0 0 52 52" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="26" cy="26" r="16"/><path d="M26 10 L26 42 M10 26 L42 26"/><path d="M15 15 L37 37 M37 15 L15 37"/></svg>
+        <a class="era-link" href="pages/lbokator.html"><h3>គុនល្បុក្កតោ</h3></a>
+        <div class="kh">Kun Lbokator</div>
+        <p>សិល្បៈក្បាច់គុនបុរាណនៃសម័យអង្គរ — វិន័យនៃរូបកាយ និងចិត្ត បន្តពីគ្រូទៅសិស្សអស់ជាច្រើនសតវត្ស។</p>
+        <span class="badge">យូណេស្កូ ២០២២</span>
+        <a class="read-more" href="pages/lbokator.html">អានបន្ថែម →</a>
+      </div>
+
+      <div class="card">
+        <div class="photo"><img src="images/card-chapei.jpg" alt="អ្នកភ្លេងកំពុងលេងចាប៉ីដងវែង" loading="lazy">
+        </div>
+        <svg class="icon" viewBox="0 0 52 52" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 40 L14 18 C 14 12, 20 10, 23 14 C 26 10, 32 12, 32 18 L32 40 Z"/><path d="M18 40 L18 26 M23 40 L23 24 M28 40 L28 26"/></svg>
+        <a class="era-link" href="pages/chapei.html"><h3>ចាប៉ីដងវែង</h3></a>
+        <div class="kh">Chapei Dang Veng</div>
+        <p>ឧបករណ៍ភ្លេងខ្សែកវែង ដែលបទចម្រៀងរបស់វាផ្ទុករឿងរ៉ាវ ប្រាជ្ញា និងកំប្លែង — សំឡេងនៃការនិទានរឿងខ្មែរ។</p>
+        <span class="badge">យូណេស្កូ ២០១៦</span>
+        <a class="read-more" href="pages/chapei.html">អានបន្ថែម →</a>
+      </div>
+
+      <div class="card">
+        <div class="photo"><img src="images/era-krama.jpg" alt="ក្រមា ក្រណាត់ត្បាញប្រពៃណី" loading="lazy">
+        </div>
+        <svg class="icon" viewBox="0 0 52 52" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="8" y="16" width="36" height="20" rx="2"/><path d="M8 22 L44 22 M8 30 L44 30"/><path d="M14 16 L14 36 M20 16 L20 36 M26 16 L26 36 M32 16 L32 36 M38 16 L38 36"/></svg>
+        <a class="era-link" href="pages/krama.html"><h3>ក្រមា</h3></a>
+        <div class="kh">Krama</div>
+        <p>ក្រណាត់ការ៉េនៃជីវិតប្រចាំថ្ងៃ — កន្សែង អង្រឹង ខ្សែក្រវាត់ ក្រណាត់ពិធី។ ត្បាញដោយដៃ ពាក់ដោយមនុស្សគ្រប់គ្នា។</p>
+        <span class="badge">យូណេស្កូ ២០២៤</span>
+        <a class="read-more" href="pages/krama.html">អានបន្ថែម →</a>
+      </div>
+
+      <div class="card">
+        <div class="photo"><img src="images/card-amok.jpg" alt="អាម៉ុកត្រី ម្ហូបដ៏ល្បីរបស់កម្ពុជា" loading="lazy">
+        </div>
+        <svg class="icon" viewBox="0 0 52 52" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M26 44 C 14 36, 10 26, 14 16 C 18 10, 24 10, 26 14 C 28 10, 34 10, 38 16 C 42 26, 38 36, 26 44 Z"/><path d="M26 44 C 20 38, 18 32, 20 26 C 22 22, 25 22, 26 26 C 27 22, 30 22, 32 26 C 34 32, 32 38, 26 44 Z" opacity=".7"/></svg>
+        <a class="era-link" href="pages/amok.html"><h3>ម្ហូបខ្មែរ</h3></a>
+        <div class="kh">Khmer Cuisine</div>
+        <p>អាម៉ុកចំហុយក្នុងស្លឹកចេក រសជាតិជ្រៅរបស់ប្រហុក គ្រឿងក្រអូប — ម្ហូបនៃតុល្យភាព និងការចងចាំ។</p>
+        <span class="badge">ប្រពៃណីរស់</span>
+        <a class="read-more" href="pages/amok.html">អានបន្ថែម →</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ FESTIVALS ============ -->
+<section id="festivals">
+  <div class="kicker">វដ្តនៃឆ្នាំ</div>
+  <div class="marquee">
+    <div class="track" id="fest-track">
+      <div class="item"><span class="kh">បុណ្យចូលឆ្នាំថ្មី</span> <span class="dot">✦</span></div>
+      <div class="item"><span class="kh">បុណ្យភ្ជុំបិណ្ឌ</span> <span class="dot">✦</span></div>
+      <div class="item"><span class="kh">បុណ្យអុំទូក</span> <span class="dot">✦</span></div>
+      <div class="item"><span class="kh">ពិធីបុណ្យវិសាខបូជា</span> <span class="dot">✦</span></div>
+      <div class="item"><span class="kh">ពិធីច្រត់ព្រះនង្គ័ល</span> <span class="dot">✦</span></div>
+      <div class="item"><span class="kh">ពិធីបុណ្យមាឃបូជា</span> <span class="dot">✦</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ UNESCO ============ -->
+<section id="unesco">
+  <div class="wrap">
+    <div class="head">
+      <div class="kicker">ឆ្លាក់ក្នុងថ្ម</div>
+      <h2>កិត្តិយសយូណេស្កូ</h2>
+      <p>បេតិកភណ្ឌពិភពលោកចំនួនប្រាំ និងបេតិកភណ្ឌអរូបីចំនួនប្រាំពីរ — ការទទួលស្គាល់របស់ពិភពលោកចំពោះអ្វីដែលខ្មែរបានដឹងជានិច្ច។</p>
+    </div>
+
+    <div class="site-gallery">
+      <a class="g-item" href="pages/angkor.html"><img src="images/era-angkor-wat.jpg" alt="អង្គរ" loading="lazy"><span>អង្គរ <i>១៩៩២</i></span></a>
+      <a class="g-item" href="pages/preah-vihear.html"><img src="images/era-preah-vihear.jpg" alt="ប្រាសាទព្រះវិហារ" loading="lazy"><span>ប្រាសាទព្រះវិហារ <i>២០០៨</i></span></a>
+      <a class="g-item" href="pages/sambor-prei-kuk.html"><img src="images/era-chenla.jpg" alt="សម្បូរព្រៃគុក" loading="lazy"><span>សម្បូរព្រៃគុក <i>២០១៧</i></span></a>
+      <a class="g-item" href="pages/koh-ker.html"><img src="images/era-koh-ker.jpg" alt="កោះកេរ្តិ៍" loading="lazy"><span>កោះកេរ្តិ៍ <i>២០២៣</i></span></a>
+      <a class="g-item" href="pages/memorial-sites.html"><div class="g-item"><img src="images/era-tuol-sleng.jpg" alt="ទីតាំងអនុស្សាវរីយ៍កម្ពុជា" loading="lazy"><span>ទីតាំងអនុស្សាវរីយ៍ <i>២០២៥</i></span></div></a>
+    </div>
+
+    <div class="unesco-grid">
+      <div class="unesco-col">
+        <h3>បេតិកភណ្ឌពិភពលោក</h3>
+        <a class="insc" href="pages/angkor.html"><div><b>អង្គរ</b><span class="kh">Angkor</span></div><span class="yr">១៩៩២</span></a>
+        <a class="insc" href="pages/preah-vihear.html"><div><b>ប្រាសាទព្រះវិហារ</b><span class="kh">Temple of Preah Vihear</span></div><span class="yr">២០០៨</span></a>
+        <a class="insc" href="pages/sambor-prei-kuk.html"><div><b>សម្បូរព្រៃគុក</b><span class="kh">Sambor Prei Kuk</span></div><span class="yr">២០១៧</span></a>
+        <a class="insc" href="pages/koh-ker.html"><div><b>កោះកេរ្តិ៍</b><span class="kh">Koh Ker</span></div><span class="yr">២០២៣</span></a>
+        <a class="insc" href="pages/memorial-sites.html"><div><b>ទីតាំងអនុស្សាវរីយ៍កម្ពុជា</b><span class="kh">Cambodian Memorial Sites</span></div><span class="yr">២០២៥</span></a>
+      </div>
+      <div class="unesco-col">
+        <h3>បេតិកភណ្ឌអរូបី</h3>
+        <a class="insc" href="pages/apsara.html"><div><b>របាំព្រះរាជទ្រព្យ</b><span class="kh">Royal Ballet of Cambodia</span></div><span class="yr">២០០៨</span></a>
+        <a class="insc" href="pages/sbek-thom.html"><div><b>ល្ខោនស្រមោលស្បែកធំ</b><span class="kh">Sbek Thom — Shadow Theatre</span></div><span class="yr">២០០៨</span></a>
+        <div class="insc"><div><b>ពិធីទាញព្រ័ត្រ</b><span class="kh">Tugging Rituals & Games</span></div><span class="yr">២០១៥</span></div>
+        <a class="insc" href="pages/chapei.html"><div><b>ចាប៉ីដងវែង</b><span class="kh">Chapei Dang Veng</span></div><span class="yr">២០១៦</span></a>
+        <div class="insc"><div><b>ល្ខោនខោល</b><span class="kh">Lkhon Khol — Masked Theatre</span></div><span class="yr">២០១៨</span></div>
+        <a class="insc" href="pages/lbokator.html"><div><b>គុនល្បុក្កតោ</b><span class="kh">Kun Lbokator</span></div><span class="yr">២០២២</span></a>
+        <a class="insc" href="pages/krama.html"><div><b>ក្រមា</b><span class="kh">Krama Textile</span></div><span class="yr">២០២៤</span></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="krama"></div>
+  <div class="inner">
+    <svg class="towers" viewBox="0 0 120 60" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M60 6 L66 16 L60 26 L54 16 Z"/><path d="M40 26 L47 36 L60 26 L73 36 L80 26"/><path d="M47 36 L52 46 L60 36 L68 46 L73 36"/><path d="M60 26 L60 36"/></svg>
+    <div class="kh">អរគុណសម្រាប់ការធ្វើដំណើរ</div>
+    <div class="en">Thank you for the journey</div>
+    <div class="credits">
+      ខ្លឹមសារចងក្រងពីយូណេស្កូ ប្រ៊ីតានីកា និងប្រភពសិក្សា ·<br>
+      ជាការឧទ្ទិសឌីជីថលដល់ប្រជាជនខ្មែរ — អតីតកាល បច្ចុប្បន្នកាល និងអនាគតកាល
+    </div>
+  </div>
+</footer>
+
+<!-- ============ RAIL ============ -->
+<aside id="rail"></aside>
+
+<script>
+(function(){
+  "use strict";
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ---- top progress + header state ---- */
+  const topbarFill = document.getElementById("topbar-fill");
+  const header = document.getElementById("header");
+  function onScroll(){
+    const doc = document.documentElement;
+    const max = doc.scrollHeight - window.innerHeight;
+    const p = max > 0 ? (window.scrollY / max) : 0;
+    topbarFill.style.width = (p * 100) + "%";
+    header.classList.toggle("scrolled", window.scrollY > 40);
+  }
+  window.addEventListener("scroll", onScroll, {passive:true});
+  onScroll();
+
+  /* ---- era reveal observer ---- */
+  const eras = Array.from(document.querySelectorAll(".era"));
+  const eraObs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){ e.target.classList.add("visible"); eraObs.unobserve(e.target); }
+    });
+  }, {threshold:.18});
+  eras.forEach(er=>eraObs.observe(er));
+
+  /* ---- cards & inscriptions reveal ---- */
+  const revObs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){ e.target.classList.add("visible"); revObs.unobserve(e.target); }
+    });
+  }, {threshold:.15});
+  document.querySelectorAll(".card, .insc").forEach(el=>revObs.observe(el));
+  document.querySelectorAll(".g-item").forEach(el=>revObs.observe(el));
+
+
+  /* ---- timeline spine fill + active era + parallax ---- */
+  const timeline = document.getElementById("timeline");
+  const spineFill = document.getElementById("spine-fill");
+  const rail = document.getElementById("rail");
+  const eraNames = ["ព្រឹកព្រលឹម","នគរភ្នំ","ចេនឡា","គ.ស. ៨០២","ភ្នំប្រាសាទ","បន្ទាយស្រី","អង្គរវត្ត","អង្គរធំ","ចូវដាក្វាន់","ការដួលរលំ","រាមកេរ្តិ៍","ការរកឃើញឡើងវិញ","អប្សរា","គ្រាងងឹត","ការរស់ឡើងវិញ"];
+
+  /* build rail */
+  eraNames.forEach((name,i)=>{
+    const b = document.createElement("button");
+    b.innerHTML = "<span>"+name+"</span>";
+    b.setAttribute("aria-label","លោតទៅសម័យកាល៖ "+name);
+    b.addEventListener("click",()=>{
+      eras[i].scrollIntoView({behavior: reduceMotion ? "auto" : "smooth", block:"center"});
+    });
+    rail.appendChild(b);
+  });
+  const railBtns = Array.from(rail.querySelectorAll("button"));
+
+  let ticking = false;
+  function updateTimeline(){
+    ticking = false;
+    const tlRect = timeline.getBoundingClientRect();
+    const total = tlRect.height - window.innerHeight;
+    const scrolled = Math.min(Math.max(-tlRect.top, 0), total);
+    const p = total > 0 ? scrolled / total : 0;
+    spineFill.style.transform = "translateX(-50%) scaleY(" + p + ")";
+
+    /* active era: the one whose center is nearest viewport center */
+    const vpMid = window.innerHeight * 0.5;
+    let active = 0, best = Infinity;
+    eras.forEach((er,i)=>{
+      const r = er.getBoundingClientRect();
+      const d = Math.abs((r.top + r.height/2) - vpMid);
+      if(d < best){ best = d; active = i; }
+    });
+    eras.forEach((er,i)=>er.classList.toggle("active", i===active));
+    railBtns.forEach((b,i)=>b.classList.toggle("active", i===active));
+
+    /* parallax visuals */
+    if(!reduceMotion){
+      eras.forEach(er=>{
+        const vis = er.querySelector(".visual");
+        if(!vis) return;
+        const r = er.getBoundingClientRect();
+        const mid = r.top + r.height/2 - vpMid;
+        const shift = Math.max(-26, Math.min(26, mid * -0.04));
+        vis.style.transform = "translateY(" + shift + "px)";
+      });
+    }
+  }
+  function requestTick(){
+    if(!ticking){ ticking = true; requestAnimationFrame(updateTimeline); }
+  }
+  window.addEventListener("scroll", requestTick, {passive:true});
+  window.addEventListener("resize", requestTick);
+  requestTick();
+
+  /* ---- marquee: duplicate track for seamless loop ---- */
+  const track = document.getElementById("fest-track");
+  track.innerHTML += track.innerHTML;
+
+  /* ---- smooth anchor nav (native scroll-behavior handles it) ---- */
+})();
+</script>
+</body>
+</html>

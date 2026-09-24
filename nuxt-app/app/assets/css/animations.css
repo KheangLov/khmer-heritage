@@ -1,0 +1,99 @@
+/* Animation layer for the Khmer Heritage site (dark / gold / moss).
+   Hidden initial states are gated behind `html.js-anim` (added by the client
+   plugin) so no-JS and prerendered output is always fully visible. */
+
+/* ---- Scroll reveal ---- */
+/* opacity + transform only: animating filter:blur on many elements is the
+   costliest thing a scroll reveal can do. */
+html.js-anim [data-reveal] { opacity: 0; transform: translateY(28px); }
+html.js-anim [data-words] { visibility: hidden; }
+.kh-word { display: inline-block; will-change: transform, opacity; }
+
+/* ---- Gold ink sweep ----
+   A soft-edged horizontal mask travels across the heading. It only masks
+   along the X axis and the element carries generous block padding, so Khmer
+   upper vowels and subscripts are never cut off. */
+[data-ink] { --ink: 130%; padding-block: .3em .25em; margin-block: -.3em -.25em; }
+html.js-anim [data-ink] { --ink: -30%;
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(var(--ink) - 25%), transparent var(--ink));
+  mask-image: linear-gradient(90deg, #000 calc(var(--ink) - 25%), transparent var(--ink));
+}
+
+/* ---- Image curtain ---- */
+[data-img-reveal] { overflow: hidden; }
+html.js-anim [data-img-reveal] { clip-path: inset(100% 0 0 0); }
+[data-img-reveal] img { transform-origin: 50% 60%; will-change: transform; }
+
+/* ---- Tilt cards: gold glare follows the pointer ---- */
+[data-tilt] { transform-style: preserve-3d; position: relative; isolation: isolate; }
+[data-tilt]::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 3;
+  background: radial-gradient(420px circle at var(--gx, 50%) var(--gy, 0%), rgba(232, 201, 106, .16), transparent 45%);
+  opacity: 0; transition: opacity .4s;
+}
+[data-tilt]:hover::after { opacity: 1; }
+
+/* ---- Scroll progress ---- */
+.kh-progress {
+  position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 200;
+  background: linear-gradient(90deg, var(--stone-2), var(--gold-2), var(--gold));
+  transform-origin: 0 50%; transform: scaleX(0); pointer-events: none;
+}
+
+/* ---- Cursor ---- */
+.kh-cursor, .kh-cursor-dot { position: fixed; top: 0; left: 0; pointer-events: none; z-index: 300; border-radius: 50%; }
+.kh-cursor {
+  width: 34px; height: 34px; margin: -17px 0 0 -17px;
+  border: 1px solid rgba(232, 201, 106, .6);
+  transition: width .3s var(--ease), height .3s var(--ease), margin .3s var(--ease), background .3s, border-color .3s;
+  mix-blend-mode: screen;
+}
+.kh-cursor.is-hot { width: 64px; height: 64px; margin: -32px 0 0 -32px; background: rgba(212, 175, 55, .12); border-color: var(--gold); }
+.kh-cursor-dot { width: 5px; height: 5px; margin: -2.5px 0 0 -2.5px; background: var(--gold-2); }
+
+/* ---- Page transitions ---- */
+.page-enter-active, .page-leave-active { transition: opacity .35s var(--ease), transform .35s var(--ease); }
+.page-enter-from { opacity: 0; transform: translateY(14px); }
+.page-leave-to { opacity: 0; transform: translateY(-10px); }
+
+
+/* ---- Ambient: breathing gold halo (timeline dots) ---- */
+@keyframes kh-glow {
+  0%, 100% { box-shadow: 0 0 0 5px rgba(212,175,55,.1), 0 0 0 1px rgba(212,175,55,.5), 0 0 22px rgba(212,175,55,.35); }
+  50% { box-shadow: 0 0 0 7px rgba(212,175,55,.16), 0 0 0 1px rgba(212,175,55,.65), 0 0 38px rgba(212,175,55,.8); }
+}
+.tl-dot, .h-dot { animation: kh-glow 5s ease-in-out infinite; }
+
+/* ---- Ambient: shimmer across gold titles ---- */
+.shimmer {
+  background-image:
+    linear-gradient(120deg, transparent 30%, rgba(255, 248, 224, .7) 50%, transparent 70%),
+    linear-gradient(180deg, var(--gold-2), var(--gold) 55%, var(--stone-2));
+  background-size: 250% 100%, 100% 100%;
+  background-repeat: no-repeat;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: kh-shimmer 8s linear infinite;
+}
+@keyframes kh-shimmer { 0% { background-position: 200% 0, 0 0; } 100% { background-position: -200% 0, 0 0; } }
+
+/* ---- Ambient: slow-turning kbach mandala ---- */
+@keyframes kh-spin { to { transform: rotate(360deg); } }
+.mandala { animation: kh-spin 120s linear infinite; will-change: transform; }
+.mandala.rev { animation-direction: reverse; animation-duration: 90s; }
+
+/* ---- Ambient: Ken Burns drift for hero photographs ---- */
+@keyframes kh-kenburns { 0% { transform: scale(1.08) translate3d(0,0,0); } 100% { transform: scale(1.18) translate3d(-2%, -1.5%, 0); } }
+.kenburns { animation: kh-kenburns 28s ease-in-out infinite alternate; will-change: transform; }
+
+/* ---- Marquee ribbon ---- */
+@keyframes kh-marquee { to { transform: translateX(-50%); } }
+.marquee-track { display: flex; width: max-content; animation: kh-marquee 60s linear infinite; }
+.marquee:hover .marquee-track { animation-play-state: paused; }
+
+/* ---- Reduced motion: everything visible, nothing moves ---- */
+@media (prefers-reduced-motion: reduce) {
+  html.js-anim [data-reveal] { opacity: 1; transform: none; }
+  .tl-dot, .h-dot, .shimmer, .mandala, .kenburns, .marquee-track { animation: none; }
+  .page-enter-active, .page-leave-active { transition: none; }
+}
+@media (pointer: fine) { html.js-anim, html.js-anim a, html.js-anim button { cursor: none; } }

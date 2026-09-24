@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ប្រតិទិនខ្មែរ — បេតិកភណ្ឌរស់រវើក</title>
+<meta name="description" content="ប្រតិទិនខ្មែរ — ថ្ងៃខែតាមចន្ទគតិ បុណ្យទាន និងពិធីបុណ្យជាតិ។">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Moul&family=Noto+Serif+Khmer:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="calendar.css">
+</head>
+<body>
+
+<div id="topbar"><i id="topbar-fill"></i></div>
+
+<header id="header">
+  <a class="brand" href="index.html">
+    <svg viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 4 L24 12 L20 20 L16 12 Z"/><path d="M8 20 L14 26 L20 20 L26 26 L32 20"/><path d="M12 26 L16 34 L20 26 L24 34 L28 26"/><path d="M20 20 L20 26"/></svg>
+    អង្គរ
+  </a>
+  <nav>
+    <a href="index.html#intro">ទឹកដី</a>
+    <a href="index.html#timeline">ដំណើរ</a>
+    <a href="index.html#living">បេតិកភណ្ឌរស់</a>
+    <a href="index.html#unesco">យូណេស្កូ</a>
+    <a href="calendar.html" class="active">ប្រតិទិន</a>
+  </nav>
+</header>
+
+<main>
+
+<section class="cal-hero">
+  <div class="cal-hero-inner">
+    <div class="kicker">វដ្តនៃឆ្នាំ</div>
+    <h1>ប្រតិទិនខ្មែរ</h1>
+    <p class="cal-sub">ថ្ងៃខែតាមចន្ទគតិ បុណ្យទាន និងពិធីបុណ្យជាតិ — គណនាតាមប្រព័ន្ធសុរិយយាត្រ ដូចដែលខ្មែរបានប្រើអស់ជាច្រើនសតវត្ស។</p>
+  </div>
+</section>
+
+<section class="cal-body">
+  <div class="wrap">
+
+    <div class="cal-toolbar">
+      <button id="prev" aria-label="ខែមុន">‹</button>
+      <div class="cal-title-wrap">
+        <div id="cal-title" class="cal-title"></div>
+        <div id="lunar-head" class="lunar-head"></div>
+      </div>
+      <button id="next" aria-label="ខែបន្ទាប់">›</button>
+      <button id="today" class="today-btn">ថ្ងៃនេះ</button>
+    </div>
+
+    <div id="cal-grid" class="cal-grid"></div>
+
+    <div class="cal-legend">
+      <div class="lg"><span class="dot festival"></span>បុណ្យទាន និងពិធីបុណ្យ</div>
+      <div class="lg"><span class="dot holiday"></span>ថ្ងៃឈប់សម្រាក និងពិធីជាតិ</div>
+      <div class="lg"><span class="dot heritage"></span>ទិវាបេតិកភណ្ឌ និងវប្បធម៌</div>
+      <div class="lg"><span class="dot today"></span>ថ្ងៃនេះ</div>
+    </div>
+
+    <div class="cal-notes">
+      <h2>កំណត់សម្គាល់</h2>
+      <p>ថ្ងៃខែតាមចន្ទគតិ គណនាតាមប្រព័ន្ធសុរិយយាត្រ (Suriyayatra) ដែលផ្អែកលើការគណនារបស់ J.C. Eade ក្នុងសៀវភៅ «The Calendrical Systems of Mainland South-East Asia» (Brill, 1995)។ ឆ្នាំចន្ទគតិខ្មែរ ចាប់ផ្តើមនៅខែចេត្រ (ប្រហែលខែមេសា) — ដូច្នេះ ព.ស. ដែលបង្ហាញ ជាឆ្នាំចន្ទគតិដែលកំពុងរស់នៅក្នុងខែនោះ។</p>
+      <p>ឆ្នាំអធិកមាតិកា ជាឆ្នាំដែលមានខែអាសាឍជាន់ (ខែទី ៨ ពីរដង) — ប្រហែលរៀងរាល់ ៣ ឆ្នាំម្តង។ ឆ្នាំអធិកវារៈ ជាឆ្នាំដែលមានថ្ងៃជាន់មួយថ្ងៃ។ កាលបរិច្ឆេទបុណ្យទាន អាចប្រែប្រួលមួយថ្ងៃ អាស្រ័យលើការប្រកាសផ្លូវការរបស់ព្រះសង្ឃរាជ និងរាជរដ្ឋាភិបាល។</p>
+    </div>
+
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="krama"></div>
+  <div class="inner">
+    <svg class="towers" viewBox="0 0 120 60" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M60 6 L66 16 L60 26 L54 16 Z"/><path d="M40 26 L47 36 L60 26 L73 36 L80 26"/><path d="M47 36 L52 46 L60 36 L68 46 L73 36"/><path d="M60 26 L60 36"/></svg>
+    <div class="kh">អរគុណសម្រាប់ការធ្វើដំណើរ</div>
+    <div class="en">Thank you for the journey</div>
+    <div class="credits">
+      ខ្លឹមសារចងក្រងពីយូណេស្កូ ប្រ៊ីតានីកា និងប្រភពសិក្សា ·<br>
+      ជាការឧទ្ទិសឌីជីថលដល់ប្រជាជនខ្មែរ — អតីតកាល បច្ចុប្បន្នកាល និងអនាគតកាល
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  const topbarFill = document.getElementById("topbar-fill");
+  const header = document.getElementById("header");
+  function onScroll(){
+    const y = window.scrollY;
+    const h = document.documentElement.scrollHeight - window.innerHeight;
+    if (topbarFill) topbarFill.style.width = (h > 0 ? (y / h) * 100 : 0) + "%";
+    header.classList.toggle("scrolled", y > 40);
+  }
+  window.addEventListener("scroll", onScroll, {passive: true});
+  onScroll();
+})();
+</script>
+<script src="calendar.js"></script>
+</body>
+</html>
