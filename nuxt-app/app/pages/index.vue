@@ -65,12 +65,12 @@ const stats = [
         <KbachMandala />
       </div>
       <GoldDust :count="80" />
-      <div class="hero-inner">
-        <div class="kicker" data-reveal><KhmerIcon name="kbach" :size="18" />បេតិកភណ្ឌរស់រវើក · ២០០០ ឆ្នាំ</div>
-        <h1 class="khmer-title shimmer" data-ink>បេតិកភណ្ឌខ្មែរ</h1>
-        <p class="en" data-scramble>THE LIVING HERITAGE OF CAMBODIA</p>
-        <p class="sub" data-words>ពីថ្មប្រាសាទ ដល់ចង្វាក់រាំ ពីរសជាតិម្ហូប ដល់វដ្តនៃឆ្នាំ — ស្វែងយល់ពីមរតកដែលនៅរស់។</p>
-        <div class="cta" data-reveal>
+      <div class="hero-inner kh-hero">
+        <div class="kicker"><KhmerIcon name="kbach" :size="18" />បេតិកភណ្ឌរស់រវើក · ២០០០ ឆ្នាំ</div>
+        <h1 class="khmer-title shimmer" data-hero-ink>បេតិកភណ្ឌខ្មែរ</h1>
+        <p class="en">THE LIVING HERITAGE OF CAMBODIA</p>
+        <p class="sub">ពីថ្មប្រាសាទ ដល់ចង្វាក់រាំ ពីរសជាតិម្ហូប ដល់វដ្តនៃឆ្នាំ — ស្វែងយល់ពីមរតកដែលនៅរស់។</p>
+        <div class="cta">
           <NuxtLink to="/timeline" class="btn primary" data-magnetic><KhmerIcon name="book" :size="18" />ខ្សែប្រវត្តិសាស្ត្រ</NuxtLink>
           <NuxtLink to="/calendar" class="btn ghost" data-magnetic><KhmerIcon name="calendar" :size="18" />ប្រតិទិនខ្មែរ</NuxtLink>
         </div>
@@ -114,7 +114,7 @@ const stats = [
       <div class="wrap">
         <div class="sec-label" data-reveal><KhmerIcon name="temple" :size="18" />សម័យកាលដប់ប្រាំ</div>
         <h2 class="sec-title" data-ink>ខ្សែស្រឡាយតែមួយ មិនដាច់</h2>
-        <p class="sec-sub" data-words>ពីរូងភ្នំល្អាងស្ពាន ដល់ការរស់ឡើងវិញ — ដើរតាមដំណើរពីរពាន់ឆ្នាំនៃអរិយធម៌ខ្មែរ។</p>
+        <p class="sec-sub" data-reveal>ពីរូងភ្នំល្អាងស្ពាន ដល់ការរស់ឡើងវិញ — ដើរតាមដំណើរពីរពាន់ឆ្នាំនៃអរិយធម៌ខ្មែរ។</p>
         <div class="timeline-list">
           <div class="tl-line" aria-hidden="true" />
           <article v-for="e in eras || []" :key="e.stem" class="tl-item">

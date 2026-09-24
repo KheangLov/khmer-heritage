@@ -33,16 +33,16 @@ async function goToAge(id: string) {
 <template>
   <div class="tl-page">
     <section class="t-hero">
-      <NuxtImg src="/images/bayon-faces.jpg" alt="" width="1920" height="1440" format="webp" densities="x1" loading="eager" class="t-hero-bg kenburns" />
+      <NuxtImg src="/images/bayon-faces.jpg" alt="" width="1920" height="1440" format="webp" densities="x1" loading="eager" fetchpriority="high" class="t-hero-bg kenburns" />
       <div class="t-veil" aria-hidden="true" />
       <div class="t-mandala" aria-hidden="true"><KbachMandala :petals="16" reverse /></div>
       <GoldDust :count="40" />
-      <div class="wrap t-inner">
-        <div class="kicker" data-reveal><KhmerIcon name="book" :size="18" />ព្រឹត្តិការណ៍ {{ khmerNum(total) }} · ៥ យុគសម័យ</div>
-        <h1 class="t-title shimmer" data-ink>ខ្សែប្រវត្តិសាស្ត្រខ្មែរ</h1>
-        <p class="en" data-scramble>A TIMELINE OF KHMER HISTORY</p>
-        <p class="sub" data-words>ប្រាំបីពាន់ឆ្នាំ ក្នុងមួយដង្ហើម — អូសចុះក្រោម ដើម្បីធ្វើដំណើរកាត់ពេលវេលា។</p>
-        <nav class="age-nav" data-reveal>
+      <div class="wrap t-inner kh-hero">
+        <div class="kicker"><KhmerIcon name="book" :size="18" />ព្រឹត្តិការណ៍ {{ khmerNum(total) }} · ៥ យុគសម័យ</div>
+        <h1 class="t-title shimmer" data-hero-ink>ខ្សែប្រវត្តិសាស្ត្រខ្មែរ</h1>
+        <p class="en">A TIMELINE OF KHMER HISTORY</p>
+        <p class="sub">ប្រាំបីពាន់ឆ្នាំ ក្នុងមួយដង្ហើម — អូសចុះក្រោម ដើម្បីធ្វើដំណើរកាត់ពេលវេលា។</p>
+        <nav class="age-nav">
           <a v-for="a in TIMELINE" :key="a.id" :href="`#${a.id}`" @click.prevent="goToAge(a.id)">{{ a.name }}</a>
         </nav>
       </div>

@@ -6,11 +6,28 @@
 /* opacity + transform only: animating filter:blur on many elements is the
    costliest thing a scroll reveal can do. */
 html.js-anim [data-reveal] { opacity: 0; transform: translateY(28px); }
-html.js-anim [data-words] { visibility: hidden; }
-/* No will-change on words or reveal images: each would keep its own GPU layer
-   for the life of the page after a one-off animation (GSAP promotes elements
-   only while they are animating). */
-.kh-word { display: inline-block; }
+
+/* ---- Hero entrance: pure CSS, plays on first paint ----
+   Above-the-fold content never waits for JavaScript (on a slow phone the
+   animation library arrives seconds after the first paint, which delayed the
+   largest paint and, with text split into word boxes / scrambled captions,
+   re-wrapped the hero — a big layout shift). Only opacity, transform and a
+   mask animate here, so nothing moves the layout. */
+@property --ink { syntax: '<percentage>'; inherits: false; initial-value: 130%; }
+.kh-hero > * { animation: kh-hero-rise .9s var(--ease) both; }
+.kh-hero > :nth-child(2) { animation-delay: .08s; }
+.kh-hero > :nth-child(3) { animation-delay: .5s; }
+.kh-hero > :nth-child(4) { animation-delay: .65s; }
+.kh-hero > :nth-child(n+5) { animation-delay: .8s; }
+@keyframes kh-hero-rise { from { opacity: 0; transform: translate3d(0, 18px, 0); } }
+[data-hero-ink] {
+  padding-block: .3em .25em; margin-block: -.3em -.25em;
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(var(--ink) - 25%), transparent var(--ink));
+  mask-image: linear-gradient(90deg, #000 calc(var(--ink) - 25%), transparent var(--ink));
+  animation: kh-ink 1.6s cubic-bezier(.45,0,.25,1) .1s both;
+}
+.kh-hero > [data-hero-ink].shimmer { animation: kh-ink 1.6s cubic-bezier(.45,0,.25,1) .1s both, kh-shimmer 9s ease-in-out 2s infinite; }
+@keyframes kh-ink { from { --ink: -30%; } to { --ink: 130%; } }
 
 /* ---- Gold ink sweep ----
    A soft-edged horizontal mask travels across the heading. It only masks
@@ -109,6 +126,8 @@ html.js-anim [data-img-reveal] { clip-path: inset(100% 0 0 0); }
 /* ---- Reduced motion: everything visible, nothing moves ---- */
 @media (prefers-reduced-motion: reduce) {
   html.js-anim [data-reveal] { opacity: 1; transform: none; }
+  .kh-hero > *, [data-hero-ink] { animation: none !important; }
+  [data-hero-ink] { -webkit-mask-image: none; mask-image: none; }
   .tl-dot::after, .h-dot::after, .shimmer, .mandala, .kenburns, .marquee-track { animation: none; }
   .page-enter-active, .page-leave-active { transition: none; }
 }

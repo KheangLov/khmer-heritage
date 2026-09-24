@@ -18,6 +18,12 @@ useHead({
   title: page.h1 || page.title,
   meta: [{ name: 'description', content: page.sub }],
 })
+// Share with this article's own photo.
+const shareImg = heritageVisual(slug)?.img
+if (shareImg) {
+  const site = useSiteConfig()
+  useSeoMeta({ ogType: 'article', ogImage: `${site.url}${shareImg}`, twitterImage: `${site.url}${shareImg}`, ogImageAlt: page.h1 || page.title })
+}
 </script>
 
 <template>

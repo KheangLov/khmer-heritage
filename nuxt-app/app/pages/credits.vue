@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import credits from '~/data/image-credits.json'
 
-useHead({ title: 'ប្រភពរូបភាព' })
+useHead({
+  title: 'ប្រភពរូបភាព',
+  meta: [{ name: 'description', content: 'ប្រភព និងអាជ្ញាប័ណ្ណនៃរូបថត ផែនទី ទិន្នន័យ និងពុម្ពអក្សរ ដែលប្រើក្នុងគេហទំព័របេតិកភណ្ឌខ្មែរ — Image and data credits.' }],
+})
 
 // Non-photo sources: the brand mark, map data and fonts.
 const sources = [
@@ -23,7 +26,7 @@ const rows = Object.entries(credits as Record<string, { title: string; author: s
   <div class="credits">
     <div class="wrap">
       <div class="kicker" data-reveal><KhmerIcon name="book" :size="18" />ប្រភពរូបភាព · Image credits</div>
-      <h1 data-ink>ប្រភពរូបភាព</h1>
+      <h1 data-hero-ink>ប្រភពរូបភាព</h1>
       <p class="lead" data-reveal>រូបថតខាងក្រោមមកពី Wikimedia Commons ក្រោមអាជ្ញាប័ណ្ណសេរី។ សូមអរគុណដល់អ្នកថតរូបទាំងអស់។</p>
       <h2 class="h2" data-reveal>រូបសញ្ញា ផែនទី និងពុម្ពអក្សរ</h2>
       <ul class="list src-list">
