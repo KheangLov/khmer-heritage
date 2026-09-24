@@ -48,7 +48,11 @@ export default defineNuxtConfig({
       // All 26 content pages are known at build time (15 era + 11 heritage),
       // so prerender the detail routes as real static HTML — a plain static
       // host (npx serve, Netlify, GitHub Pages) serves them without a fallback.
+      // The two index pages must be listed too: without them /era and
+      // /heritage had no HTML (a 404 on a static host, and 86 link-checker
+      // errors, since every page links to them from the nav).
       routes: [
+        '/', '/era', '/heritage',
         '/timeline', '/credits', '/calendar', '/map',
         '/era/era-0', '/era/era-1', '/era/era-2', '/era/era-3', '/era/era-4',
         '/era/era-5', '/era/era-6', '/era/era-7', '/era/era-8', '/era/era-9',
@@ -59,6 +63,17 @@ export default defineNuxtConfig({
         '/heritage/sambor-prei-kuk', '/heritage/sbek-thom',
       ],
     },
+  },
+  // Open Graph images are not used (no defineOgImage anywhere). Left on, the
+  // module bundles @takumi-rs/core with its per-platform native binaries into
+  // the server build, which fails under pnpm ("ENOENT … core-win32-x64-msvc":
+  // only the current platform's binary is installed).
+  ogImage: { enabled: false },
+  linkChecker: {
+    // /map?place=… links are the prerendered /map page with a query the page
+    // reads client-side; the checker only knows the bare /map and reports them
+    // as 404s, so skip the query variants.
+    excludeLinks: [/^\/map\?/],
   },
   typescript: {
     tsConfig: {
