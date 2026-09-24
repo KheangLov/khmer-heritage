@@ -2,6 +2,19 @@
 import '~/assets/css/animations.css'
 import type { KhmerIconName } from '~/components/KhmerIcon.vue'
 
+// Social sharing defaults (Open Graph / Twitter). Titles, descriptions,
+// canonical and og:url come from each page + site config (@nuxtjs/seo);
+// article pages override the image with their own photo.
+const site = useSiteConfig()
+useSeoMeta({
+  ogType: 'website',
+  ogSiteName: 'បេតិកភណ្ឌខ្មែរ — Khmer Heritage',
+  ogLocale: 'km_KH',
+  ogImage: `${site.url}/og-image.jpg`,
+  ogImageAlt: 'បេតិកភណ្ឌខ្មែរ — អង្គរវត្តពេលថ្ងៃរះ',
+  twitterCard: 'summary_large_image',
+  twitterImage: `${site.url}/og-image.jpg`,
+})
 useHead({
   htmlAttrs: { lang: 'km' },
   titleTemplate: (t) => (t ? `${t} — បេតិកភណ្ឌខ្មែរ` : 'បេតិកភណ្ឌខ្មែរ — Khmer Heritage'),
@@ -94,7 +107,9 @@ nav a.router-link-exact-active,nav a.router-link-active:not([href="/"]){color:va
 .menu-btn[aria-expanded="true"] span:first-child{transform:translateY(4px) rotate(45deg)}
 .menu-btn[aria-expanded="true"] span:last-child{transform:translateY(-4px) rotate(-45deg)}
 @media(max-width:1060px){
-  header{padding:6px 8px 6px 14px;left:10px;right:10px;top:calc(8px + env(safe-area-inset-top))}
+  /* phones: a solid bar — re-blurring the page under a fixed header on every
+     scroll frame is one of the costliest things a mobile GPU can be asked to do */
+  header{padding:6px 8px 6px 14px;left:10px;right:10px;top:calc(8px + env(safe-area-inset-top));background:rgba(12,20,16,.97);backdrop-filter:none}
   .menu-btn{display:block}
   nav{position:absolute;top:calc(100% + 8px);left:0;right:0;flex-direction:column;gap:2px;padding:12px 12px 16px;background:rgba(10,16,13,.97);border:1px solid rgba(212,175,55,.2);border-radius:var(--r-lg);
     clip-path:inset(0 0 100% 0);transition:clip-path .45s var(--ease);pointer-events:none}

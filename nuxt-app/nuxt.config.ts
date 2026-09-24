@@ -46,12 +46,24 @@ export default defineNuxtConfig({
     },
   },
   image: {
-    // Optimize local images only — everything lives under public/images/.
-    provider: 'ipx',
+    // Local images only (public/images/). On Vercel, Vercel's image CDN
+    // resizes, converts to AVIF/WebP and caches at the edge; elsewhere IPX
+    // (prerendered to static files). Without this, every image on Vercel went
+    // through the serverless function running IPX + sharp: cold starts on the
+    // first view of each size.
+    provider: process.env.VERCEL ? 'vercel' : 'ipx',
     quality: 85,
     densities: [1, 2],
+    // The Vercel provider only serves widths listed here (anything else is
+    // rounded up): every NuxtImg width in the app, at 1× and 2×.
+    screens: {
+      w104: 104, w160: 160, w208: 208, xs: 320, w420: 420, w480: 480, sm: 640, w720: 720,
+      md: 768, w840: 840, w960: 960, lg: 1024, xl: 1280, w1440: 1440, xxl: 1536, w1920: 1920,
+    },
   },
   nitro: {
+    // Vercel image CDN: keep optimised images for 30 days (default 5 min).
+    vercel: { config: { images: { minimumCacheTTL: 2592000 } } },
     prerender: {
       // The static heritage site lives in public/static/ and is copied as-is;
       // it is not a Nuxt route, so skip it during prerendering.
@@ -75,8 +87,19 @@ export default defineNuxtConfig({
       ],
     },
   },
-  // The offline fallback page is for the service worker only.
-  routeRules: { '/offline': { robots: false } },
+  routeRules: {
+    // The offline fallback page is for the service worker only.
+    '/offline': { robots: false },
+    // CDN caching on Vercel. Hashed build files (/_nuxt) are already immutable;
+    // these paths are not content-hashed, so they get a long max-age plus
+    // stale-while-revalidate (a redeploy with a changed photo still shows up).
+    '/images/**': { headers: { 'cache-control': 'public, max-age=2592000, stale-while-revalidate=604800' } },
+    '/_ipx/**': { headers: { 'cache-control': 'public, max-age=2592000, stale-while-revalidate=604800' } },
+    '/icons/**': { headers: { 'cache-control': 'public, max-age=604800, stale-while-revalidate=604800' } },
+    '/fonts/**': { headers: { 'cache-control': 'public, max-age=31536000, immutable' } },
+    '/_fonts/**': { headers: { 'cache-control': 'public, max-age=31536000, immutable' } },
+    '/data/**': { headers: { 'cache-control': 'public, max-age=3600, stale-while-revalidate=604800' } },
+  },
   // ---------- Installable app + offline (service worker) ----------
   pwa: {
     registerType: 'prompt', // a new version waits for the reader's OK (components/PwaPrompt.vue)
@@ -157,7 +180,7 @@ export default defineNuxtConfig({
           options: { cacheName: 'kh-build', expiration: { maxEntries: 40 } },
         },
         {
-          urlPattern: /\/(?:_ipx|images)\//,
+          urlPattern: /\/(?:_ipx\/|images\/|_vercel\/image\b)/,
           handler: 'CacheFirst',
           options: { cacheName: 'kh-images', expiration: { maxEntries: 300, maxAgeSeconds: 60 * 24 * 3600, purgeOnQuotaError: true } },
         },
@@ -227,9 +250,20 @@ export default defineNuxtConfig({
   },
   devtools: { enabled: true },
   compatibilityDate: '2024-04-03',
+  // Used for canonical URLs, the sitemap, robots.txt, og:url and structured data.
   site: {
-    url: 'https://khmer-heritage.example',
+    url: 'https://kh-historic.vercel.app',
     name: 'បេតិកភណ្ឌខ្មែរ — Khmer Heritage',
-    description: 'បេតិកភណ្ឌរស់រវើករបស់ខ្មែរ — ស្ថាបត្យកម្ម របាំ តន្ត្រី ម្ហូប និងប្រតិទិនចន្ទគតិ។',
+    description: 'ប្រាសាទប្រវត្តិសាស្ត្រទូទាំងកម្ពុជា ខ្សែប្រវត្តិសាស្ត្រខ្មែរ បេតិកភណ្ឌរស់ និងប្រតិទិនចន្ទគតិ — Khmer temples, history, living heritage and the lunar calendar.',
+    defaultLocale: 'km',
+    indexable: true,
+  },
+  schemaOrg: {
+    identity: {
+      type: 'Organization',
+      name: 'បេតិកភណ្ឌខ្មែរ — Khmer Heritage',
+      alternateName: 'Khmer Heritage',
+      logo: '/icon-512.png',
+    },
   },
 })

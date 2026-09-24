@@ -34,7 +34,10 @@ const props = withDefaults(defineProps<{
   /** px on the left covered by the host's overlays (a floating panel), so the card, the
    *  map/satellite switch and camera moves keep clear of them */
   inset?: number
-}>(), { temples: null, withTemples: false, focus: '', full: false, country: '', boundary: null, hoverId: '', fsTarget: null, inset: 0 })
+  /** narrow screens: float the info card over the bottom of the map (the host's
+   *  bottom sheet sits below it, at --pm-card-bottom) instead of under the map */
+  overlayCard?: boolean
+}>(), { temples: null, withTemples: false, focus: '', full: false, country: '', boundary: null, hoverId: '', fsTarget: null, inset: 0, overlayCard: false })
 const emit = defineEmits<{ select: [id: string]; fullscreen: [on: boolean] }>()
 
 const root = ref<HTMLElement | null>(null)
@@ -288,7 +291,7 @@ const leftUi = (withCard: boolean) =>
 function centreOffset(): [number, number] {
   const w = root.value?.clientWidth ?? 800
   if (w >= 700) return [leftUi(true) / 2, 0]
-  return [0, fullscreen.value ? -(root.value?.clientHeight ?? 600) * 0.29 : 0]
+  return [0, fullscreen.value || props.overlayCard ? -(root.value?.clientHeight ?? 600) * 0.29 : 0]
 }
 function select(id: string, fly = true) {
   selectedId.value = id
@@ -524,7 +527,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="root" class="pm" :class="{ full, fs: fullscreen }" :style="inset ? { '--pm-inset': `${inset}px` } : undefined">
+  <div ref="root" class="pm" :class="{ full, fs: fullscreen, overlay: fullscreen || overlayCard }" :style="inset ? { '--pm-inset': `${inset}px` } : undefined">
     <div class="pm-stage">
       <div ref="mapEl" class="pm-map" data-lenis-prevent role="application" aria-label="ផែនទីទីតាំងប្រវត្តិសាស្ត្រ" />
 
@@ -681,7 +684,7 @@ onBeforeUnmount(() => {
 .pm-country{position:absolute;left:14px;bottom:14px;max-width:440px;display:flex;gap:12px;align-items:center;padding:14px 18px;border-radius:var(--r-lg);color:var(--gold-2);z-index:3}
 .pm-country p{font-family:var(--khmer);font-size:.92rem;line-height:1.95;color:var(--ivory)}
 
-.pm-card{position:absolute;left:var(--pm-inset,14px);top:62px;transition:left .4s var(--ease);width:min(380px,calc(100% - 90px));max-height:calc(100% - 76px);overflow:auto;border-radius:var(--r-xl);z-index:4;scrollbar-width:thin;overscroll-behavior:contain}
+.pm-card{position:absolute;left:var(--pm-inset,14px);top:62px;transition:left .4s var(--ease);width:min(380px,calc(100% - 90px));max-height:calc(100% - 76px - var(--pm-card-bottom, 0px));overflow:auto;border-radius:var(--r-xl);z-index:4;scrollbar-width:thin;overscroll-behavior:contain}
 .x{position:absolute;top:8px;right:8px;z-index:2;width:30px;height:30px;border-radius:var(--r-sm);border:1px solid rgba(212,175,55,.3);background:rgba(10,17,13,.8);color:var(--gold-2);font-size:1.1rem;line-height:1;cursor:pointer}
 .c-img{height:128px;overflow:hidden;position:relative}
 .c-img img{width:100%;height:100%;object-fit:cover}
@@ -743,9 +746,10 @@ onBeforeUnmount(() => {
   .full .pm-map{flex:1;min-height:300px}
   .pm-card{position:relative;top:auto;left:auto;width:auto;max-height:none;border-radius:0;border-width:1px 0 0;box-shadow:none;background:var(--moss-3)}
   .pm-seg{top:10px;left:var(--pm-inset,10px)}
-  /* fullscreen on a phone: the card floats over the bottom of the map */
-  .fs .pm-stage{display:block}
-  .fs .pm-card{position:absolute;top:auto;left:10px;right:10px;bottom:10px;max-height:58%;border-radius:var(--r-lg);border-width:1px;background:var(--glass);box-shadow:0 12px 30px rgba(0,0,0,.45)}
+  /* fullscreen, or a host with a bottom sheet: the card floats over the map */
+  .overlay .pm-stage{display:block}
+  .overlay .pm-map{height:100%}
+  .overlay .pm-card{position:absolute;top:auto;left:10px;right:10px;bottom:var(--pm-card-bottom,10px);max-height:min(58%,calc(100% - var(--pm-card-bottom,10px) - 64px));border-radius:var(--r-lg);border-width:1px;background:rgba(10,17,13,.96);box-shadow:0 12px 30px rgba(0,0,0,.45)}
   .pm-ctrl{top:10px;right:10px}
   .pm-country{left:10px;right:10px;bottom:10px;max-width:none}
 }

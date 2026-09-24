@@ -83,11 +83,13 @@ function syncUrl() {
   router.replace({ query })
 }
 
-// ---------- fullscreen: panel + map together ----------
-// The map's fullscreen button enlarges this whole section, so search and the
-// list stay usable. The panel floats over the map (desktop) or becomes a bottom
-// sheet (phone), and folds away to a tab to give the map the whole screen.
+// ---------- layout: desktop panel, phone bottom sheet, fullscreen ----------
+// Desktop: the panel sits beside the map; fullscreen enlarges panel + map
+// together, the panel floating over the map and folding away to a tab.
+// Phone (≤ 900 px): the map fills the screen and the panel is a bottom sheet
+// with three snap points — peek (search), half, full — dragged by its handle.
 const appEl = ref<HTMLElement | null>(null)
+const sideEl = ref<HTMLElement | null>(null)
 const fs = ref(false)
 const panelOpen = ref(true)
 const wide = ref(true)
@@ -99,21 +101,76 @@ onMounted(() => {
   mq.addEventListener('change', onMq)
 })
 onBeforeUnmount(() => mq?.removeEventListener('change', onMq))
-// Desktop opens with the panel beside the map; a phone opens on the map, with
-// the list one tap away.
-watch(fs, (on) => { panelOpen.value = !on || wide.value })
+watch(fs, () => { panelOpen.value = true })
 // What the panel (or its tab) covers on the map's left, for the map's own UI.
-const mapInset = computed(() => !fs.value ? 0 : wide.value ? (panelOpen.value ? 398 : 76) : 64)
+const mapInset = computed(() => wide.value && fs.value ? (panelOpen.value ? 398 : 76) : 0)
+
+type Snap = 'peek' | 'half' | 'full'
+const PEEK = 128 // grip + search box + result count
+const snap = ref<Snap>('peek')
+const appH = ref(0)
+const dragY = ref<number | null>(null) // live offset while dragging
+let ro: ResizeObserver | null = null
+onMounted(() => {
+  ro = new ResizeObserver(() => { appH.value = appEl.value?.clientHeight ?? 0 })
+  if (appEl.value) ro.observe(appEl.value)
+})
+onBeforeUnmount(() => ro?.disconnect())
+const sheetFull = computed(() => Math.max(PEEK, appH.value - 56))
+const snapY = (st: Snap) => sheetFull.value - (st === 'peek' ? PEEK : st === 'half' ? Math.round(appH.value * 0.55) : sheetFull.value)
+const sheetY = computed(() => dragY.value ?? snapY(snap.value))
+const sheetStyle = computed(() => wide.value || !appH.value ? undefined : {
+  height: `${sheetFull.value}px`,
+  transform: `translate3d(0,${sheetY.value}px,0)`,
+  transition: dragY.value === null ? undefined : 'none',
+  // rows hidden below the screen edge stay reachable by scrolling
+  '--sheet-hidden': `${sheetY.value}px`,
+})
+
+let drag: { y0: number; top0: number; t0: number; lastY: number; lastT: number; moved: boolean } | null = null
+function onGripDown(e: PointerEvent) {
+  if (wide.value) return
+  drag = { y0: e.clientY, top0: sheetY.value, t0: e.timeStamp, lastY: e.clientY, lastT: e.timeStamp, moved: false }
+  ;(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
+}
+function onGripMove(e: PointerEvent) {
+  if (!drag) return
+  const dy = e.clientY - drag.y0
+  if (Math.abs(dy) > 4) drag.moved = true
+  if (!drag.moved) return
+  dragY.value = Math.min(snapY('peek'), Math.max(0, drag.top0 + dy))
+  drag.lastY = e.clientY
+  drag.lastT = e.timeStamp
+}
+function onGripUp(e: PointerEvent) {
+  if (!drag) return
+  const d = drag
+  drag = null
+  if (!d.moved) { // a tap cycles peek → half → full → peek
+    snap.value = snap.value === 'peek' ? 'half' : snap.value === 'half' ? 'full' : 'peek'
+    return
+  }
+  const y = dragY.value ?? snapY(snap.value)
+  const v = (e.clientY - d.lastY) / Math.max(1, e.timeStamp - d.lastT) // px/ms, + = down
+  const order: Snap[] = ['full', 'half', 'peek']
+  let target = order.reduce((a, b) => Math.abs(snapY(a) - y) < Math.abs(snapY(b) - y) ? a : b)
+  if (Math.abs(v) > 0.5) { // a flick moves one snap in its direction
+    const i = order.indexOf(target)
+    const cur = snapY(target)
+    if (v > 0 && cur < y) target = order[Math.min(2, i + 1)]!
+    if (v < 0 && cur > y) target = order[Math.max(0, i - 1)]!
+  }
+  snap.value = target
+  dragY.value = null
+}
+// typing in the search box opens the sheet enough to see results
+const onSearchFocus = () => { if (!wide.value && snap.value === 'peek') snap.value = 'half' }
 
 function pick(id: string) {
   focus.value = id
   mapRef.value?.select(id)
-  if (fs.value) {
-    // on a phone the sheet would cover the temple's card
-    if (!wide.value) panelOpen.value = false
-    return
-  }
-  if (window.innerWidth < 900) document.querySelector('.stage')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  // on a phone, lower the sheet so the temple's card shows over the map
+  if (!wide.value) snap.value = 'peek'
 }
 // Keep the chosen row visible — scrolling the list only (desktop), never the page.
 function onMapSelect(id: string) {
@@ -143,27 +200,42 @@ const rowSub = (t: TempleRow) => [t.en && t.en !== t.km ? t.en : '', t.y].filter
     <header class="head wrap">
       <div>
         <div class="kicker"><KhmerIcon name="pin" :size="18" />ទីតាំង · ប្រវត្តិ · ទិសដៅ</div>
-        <h1 data-ink>ផែនទីប្រាសាទកម្ពុជា</h1>
+        <h1 data-hero-ink>ផែនទីប្រាសាទកម្ពុជា</h1>
       </div>
       <p class="lead">ប្រាសាទប្រវត្តិសាស្ត្រ {{ ready ? khmerNum(f.temples.value.length) : '…' }} កន្លែង ទូទាំងប្រទេស — ស្វែងរកតាមខេត្ត ស្រុក ឃុំ ភូមិ ហើយចុចលើប្រាសាទនីមួយៗ ដើម្បីមើលទីតាំង និងអានប្រវត្តិ។</p>
     </header>
 
     <section ref="appEl" class="app wrap" :class="{ fs, 'panel-closed': fs && !panelOpen }">
-      <button v-if="fs && !panelOpen" class="panel-tab" aria-controls="map-panel" aria-expanded="false" title="បង្ហាញបញ្ជីប្រាសាទ" @click="panelOpen = true">
+      <button v-if="wide && fs && !panelOpen" class="panel-tab" aria-controls="map-panel" aria-expanded="false" title="បង្ហាញបញ្ជីប្រាសាទ" @click="panelOpen = true">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10" /></svg>
         <span class="n">{{ khmerNum(results.length) }}</span>
       </button>
-      <aside id="map-panel" class="side" :inert="fs && !panelOpen ? true : undefined">
-        <div v-if="fs" class="side-head">
+      <aside
+        id="map-panel" ref="sideEl" class="side" :class="{ sheet: !wide }" :data-snap="wide ? undefined : snap"
+        :style="sheetStyle" :inert="wide && fs && !panelOpen ? true : undefined"
+      >
+        <!-- phone: drag (or tap) the handle to move the sheet between peek / half / full -->
+        <div
+          class="sheet-grip" role="button" tabindex="0" aria-controls="map-panel"
+          :aria-label="snap === 'full' ? 'បង្រួមបញ្ជី' : 'ពង្រីកបញ្ជី'"
+          @pointerdown="onGripDown" @pointermove="onGripMove" @pointerup="onGripUp" @pointercancel="onGripUp"
+          @keydown.enter.prevent="snap = snap === 'full' ? 'peek' : 'full'"
+        >
           <span class="grip" aria-hidden="true" />
+          <span class="sheet-title">
+            <KhmerIcon name="temple" :size="18" />{{ ready ? khmerNum(results.length) : '…' }} ប្រាសាទ
+            <svg viewBox="0 0 24 24" class="chev" :class="{ down: snap === 'full' }" aria-hidden="true"><path d="m6 15 6-6 6 6" /></svg>
+          </span>
+        </div>
+        <div v-if="wide && fs" class="side-head">
           <span class="side-title"><KhmerIcon name="temple" :size="20" />ស្វែងរកប្រាសាទ</span>
-          <button class="side-x" :title="wide ? 'បង្រួមបញ្ជី' : 'បិទបញ្ជី'" :aria-label="wide ? 'បង្រួមបញ្ជី' : 'បិទបញ្ជី'" aria-controls="map-panel" aria-expanded="true" @click="panelOpen = false">
-            <svg viewBox="0 0 24 24" aria-hidden="true"><path v-if="wide" d="m15 6-6 6 6 6" /><path v-else d="m6 9 6 6 6-6" /></svg>
+          <button class="side-x" title="បង្រួមបញ្ជី" aria-label="បង្រួមបញ្ជី" aria-controls="map-panel" aria-expanded="true" @click="panelOpen = false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 6-6 6 6 6" /></svg>
           </button>
         </div>
         <label class="search">
           <KhmerIcon name="compass" :size="18" />
-          <input v-model="q" type="search" placeholder="ស្វែងរកប្រាសាទ… (ខ្មែរ ឬ English)" aria-label="ស្វែងរកប្រាសាទ">
+          <input v-model="q" type="search" placeholder="ស្វែងរកប្រាសាទ… (ខ្មែរ ឬ English)" aria-label="ស្វែងរកប្រាសាទ" @focus="onSearchFocus">
         </label>
 
         <div class="kinds" role="radiogroup" aria-label="ប្រភេទ">
@@ -247,7 +319,7 @@ const rowSub = (t: TempleRow) => [t.en && t.en !== t.km ? t.en : '', t.y].filter
 
       <div class="stage">
         <ClientOnly>
-          <PlaceMap ref="mapRef" :places="shownPlaces" :temples="results" :focus="focus" :boundary="boundary" :hover-id="hoverId" :fs-target="appEl" :inset="mapInset" full @select="onMapSelect" @fullscreen="fs = $event" />
+          <PlaceMap ref="mapRef" :places="shownPlaces" :temples="results" :focus="focus" :boundary="boundary" :hover-id="hoverId" :fs-target="appEl" :inset="mapInset" :overlay-card="!wide" full @select="onMapSelect" @fullscreen="fs = $event" />
           <template #fallback><div class="map-fallback" /></template>
         </ClientOnly>
       </div>
@@ -305,19 +377,14 @@ h1{font-family:var(--display);font-size:clamp(1.7rem,3.6vw,2.5rem);color:var(--i
 .empty{display:flex;flex-direction:column;align-items:center;gap:8px;font-family:var(--khmer);color:var(--stone);text-align:center;padding:30px 16px;line-height:2}
 .src{font-family:var(--khmer);font-size:.68rem;color:var(--stone-3);line-height:1.8;margin-top:8px}
 
-@media (max-width:900px){
-  .app{grid-template-columns:minmax(0,1fr);height:auto;padding-left:16px;padding-right:16px}
-  .stage{order:-1;height:70vh;min-height:440px}
-  .list{overflow:visible}
-}
-
-/* ---- Fullscreen: the whole section (panel + map) fills the screen ---- */
+/* ---- Fullscreen (desktop): the section fills the screen, the panel floats ---- */
 .app.fs{position:relative;display:block;width:100%;max-width:none;height:100dvh;min-height:0;margin:0;padding:0;background:var(--night)}
 .app.fs .stage{position:absolute;inset:0;height:auto;min-height:0}
-.app.fs .side{position:absolute;z-index:6;top:calc(14px + env(safe-area-inset-top));left:14px;bottom:14px;width:370px;background:rgba(10,17,13,.94);box-shadow:0 18px 50px rgba(0,0,0,.55);transition:transform .4s var(--ease),opacity .3s var(--ease)}
-.app.fs.panel-closed .side{transform:translateX(calc(-100% - 24px));opacity:0;pointer-events:none}
+@media (min-width:901px){
+  .app.fs .side{position:absolute;z-index:6;top:calc(14px + env(safe-area-inset-top));left:14px;bottom:14px;width:370px;background:rgba(10,17,13,.94);box-shadow:0 18px 50px rgba(0,0,0,.55);transition:transform .4s var(--ease),opacity .3s var(--ease)}
+  .app.fs.panel-closed .side{transform:translateX(calc(-100% - 24px));opacity:0;pointer-events:none}
+}
 .side-head{display:flex;align-items:center;gap:8px;margin:-2px 0 10px}
-.grip{display:none}
 .side-title{flex:1;display:flex;align-items:center;gap:8px;font-family:var(--title);font-size:.95rem;line-height:1.8;color:var(--gold-2)}
 .side-x,.panel-tab{display:grid;place-items:center;border:1px solid rgba(212,175,55,.3);background:rgba(10,17,13,.88);color:var(--gold-2);cursor:pointer;transition:background .2s,border-color .2s}
 .side-x{width:34px;height:34px;border-radius:var(--r-sm)}
@@ -326,13 +393,35 @@ h1{font-family:var(--display);font-size:clamp(1.7rem,3.6vw,2.5rem);color:var(--i
 .panel-tab{position:absolute;z-index:6;top:calc(14px + env(safe-area-inset-top));left:14px;width:48px;height:48px;border-radius:var(--r-md);box-shadow:0 12px 30px rgba(0,0,0,.45)}
 .panel-tab .n{position:absolute;top:-8px;right:-10px;min-width:22px;padding:0 6px;border-radius:var(--r-pill);background:var(--gold-2);color:var(--night);font-family:var(--khmer);font-size:.66rem;line-height:1.75;text-align:center}
 
-/* phone: the panel is a bottom sheet over the map */
+/* ---- Phone: full-screen map + draggable bottom sheet ----
+   The resting (peek) geometry is pure CSS, so the server-rendered page already
+   has the phone layout — JS only takes over for dragging and the other snap
+   points (inline height/transform in px, identical at rest: no layout shift). */
+.sheet-grip{display:none}
 @media (max-width:900px){
-  .app.fs .side{top:auto;left:0;right:0;bottom:0;width:auto;max-height:80dvh;border-radius:var(--r-xl) var(--r-xl) 0 0;border-width:1px 0 0;padding:8px 14px max(14px,env(safe-area-inset-bottom))}
-  .app.fs.panel-closed .side{transform:translateY(calc(100% + 24px))}
-  .app.fs .list{overflow:auto}
-  .app.fs .grip{display:block;position:absolute;top:6px;left:50%;width:40px;height:4px;margin-left:-20px;border-radius:var(--r-pill);background:rgba(212,175,55,.35)}
-  .app.fs .side-head{margin-top:8px}
-  .panel-tab{top:calc(10px + env(safe-area-inset-top));left:10px;width:44px;height:44px}
+  .map-page{padding-top:calc(68px + env(safe-area-inset-top));min-height:0}
+  /* the page heading stays for search engines and screen readers */
+  .head{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+  .app,.app.fs{display:block;position:relative;max-width:none;padding:0;overflow:hidden;min-height:420px}
+  .app{height:calc(100dvh - 68px - env(safe-area-inset-top))}
+  .app.fs{height:100dvh}
+  .stage{position:absolute;inset:0;height:auto;min-height:0;--pm-card-bottom:140px} /* card floats just above the peeking sheet */
+  .stage :deep(.pm){border-radius:var(--r-xl) var(--r-xl) 0 0;border-width:1px 0 0;box-shadow:none}
+  .app.fs .stage :deep(.pm){border-radius:0}
+  .side{position:absolute;z-index:6;left:0;right:0;bottom:0;height:calc(100% - 56px);transform:translate3d(0,calc(100% - 128px),0);padding:0 14px;border-radius:var(--r-xl) var(--r-xl) 0 0;border-width:1px 0 0;background:rgba(10,17,13,.97);box-shadow:0 -14px 40px rgba(0,0,0,.5);transition:transform .38s var(--ease);will-change:transform}
+  .side .list{overflow:auto;padding-bottom:calc(var(--sheet-hidden, 0px) + 16px + env(safe-area-inset-bottom))}
+  .sheet-grip{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0 8px;margin:0 -14px;cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+  .sheet-grip:active{cursor:grabbing}
+  .grip{width:42px;height:5px;border-radius:var(--r-pill);background:rgba(212,175,55,.45)}
+  .sheet-title{display:flex;align-items:center;gap:8px;font-family:var(--khmer);font-size:.8rem;line-height:1.9;color:var(--gold-2)}
+  .chev{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;transition:transform .3s var(--ease)}
+  .chev.down{transform:rotate(180deg)}
+  .side .search input{font-size:16px} /* ≥16px: iOS does not zoom the page on focus */
+  .side .cascade select{font-size:16px;line-height:1.6}
+  .side .kinds{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:8px -14px;padding:0 14px}
+  .side .kinds button{flex:none;padding:4px 14px}
+  .side .src{display:none}
+  /* ≥ 12px on phones: list subtitles, filter labels, counts, badges */
+  .side .sub,.side .cascade span,.side .count,.side .clear,.side .group,.side .badge{font-size:12px}
 }
 </style>

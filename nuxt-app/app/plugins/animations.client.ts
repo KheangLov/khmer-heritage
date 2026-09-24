@@ -1,16 +1,13 @@
 import { defineNuxtPlugin } from '#imports'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { SplitText } from 'gsap/SplitText'
-import { ScrambleTextPlugin } from 'gsap/ScrambleTextPlugin'
 import Lenis from 'lenis'
 
 // Motion layer. Pages opt in with data attributes — no per-page JS:
 //   data-reveal          fade/lift/blur in, siblings cascade
 //   data-ink             gold "brush" sweep reveal for headings (mask, not clip)
-//   data-words           words drift in one by one (split on spaces only —
-//                        Khmer clusters are never broken apart)
-//   data-scramble        Latin caption decodes from random glyphs
+//   (page heroes animate in pure CSS — .kh-hero / data-hero-ink in
+//   animations.css — so above-the-fold content never waits for this file)
 //   data-img-reveal      image uncovered by a rising curtain, then settles
 //   data-parallax="0.2"  scroll-linked drift (fraction of viewport)
 //   data-count="802"     number counts up (rendered in Khmer numerals)
@@ -23,7 +20,7 @@ export default defineNuxtPlugin((nuxtApp) => {
   if (!import.meta.client) return
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
-  gsap.registerPlugin(ScrollTrigger, SplitText, ScrambleTextPlugin)
+  gsap.registerPlugin(ScrollTrigger)
   // Initial hidden states only apply under `.js-anim` (see animations.css),
   // so no-JS visitors and crawlers always see the full content.
   document.documentElement.classList.add('js-anim')
@@ -118,27 +115,6 @@ export default defineNuxtPlugin((nuxtApp) => {
       gsap.fromTo(el, { '--ink': '-30%' }, {
         '--ink': '130%', duration: 1.8, ease: 'power2.inOut',
         scrollTrigger: { trigger: el, start: 'top 88%', once: true },
-      })
-    })
-
-    // Word cascade. Split only on whitespace — never by character — so Khmer
-    // consonant clusters, subscripts and vowels stay intact.
-    gsap.utils.toArray<HTMLElement>('[data-words]').forEach((el) => {
-      if (!once(el, 'words')) return
-      const split = new SplitText(el, { type: 'words', wordsClass: 'kh-word' })
-      gsap.set(el, { autoAlpha: 1 })
-      gsap.from(split.words, {
-        autoAlpha: 0, y: 16, duration: 0.8, stagger: 0.05, ease: 'power3.out',
-        scrollTrigger: { trigger: el, start: 'top 90%', once: true },
-      })
-    })
-
-    gsap.utils.toArray<HTMLElement>('[data-scramble]').forEach((el) => {
-      if (!once(el, 'scramble')) return
-      const text = el.textContent ?? ''
-      gsap.to(el, {
-        duration: 1.6, scrambleText: { text, chars: 'ᚠΛΞΣΦΨΩ◇◆✦', revealDelay: 0.3, speed: 0.5 },
-        scrollTrigger: { trigger: el, start: 'top 92%', once: true },
       })
     })
 

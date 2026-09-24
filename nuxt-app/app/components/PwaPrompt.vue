@@ -26,9 +26,18 @@ const card = ref(false)
 const readyToast = ref(false)
 const canPrompt = computed(() => !!$pwa?.showInstallPrompt && !$pwa?.isPWAInstalled)
 
+// Notices wait for the reader's first tap / key press. Before that they would
+// be the newest, largest text on screen and count as the page's Largest
+// Contentful Paint (browsers stop measuring LCP at the first input) — on the
+// map page, a toast appearing after the precache made LCP ~17 s on mobile.
+const interacted = ref(false)
+const markInteracted = () => { interacted.value = true }
+
 let offerTimer: ReturnType<typeof setTimeout> | undefined
 const setOnline = () => { online.value = navigator.onLine }
 onMounted(() => {
+  window.addEventListener('pointerdown', markInteracted, { once: true, passive: true })
+  window.addEventListener('keydown', markInteracted, { once: true })
   setOnline()
   window.addEventListener('online', setOnline)
   window.addEventListener('offline', setOnline)
@@ -40,18 +49,20 @@ onMounted(() => {
   }, 40_000)
 })
 onBeforeUnmount(() => {
+  window.removeEventListener('pointerdown', markInteracted)
+  window.removeEventListener('keydown', markInteracted)
   clearTimeout(offerTimer)
   window.removeEventListener('online', setOnline)
   window.removeEventListener('offline', setOnline)
 })
 watch(requested, (v) => { if (v) card.value = true })
-watch(() => $pwa?.offlineReady, (v) => {
+watch(() => !!$pwa?.offlineReady && interacted.value, (v) => {
   if (!v) return
   readyToast.value = true
   setTimeout(() => { readyToast.value = false }, 6000)
 })
 
-const showCard = computed(() => card.value && (canPrompt.value || ios.value))
+const showCard = computed(() => card.value && interacted.value && (canPrompt.value || ios.value))
 async function install() {
   const choice = await $pwa?.install()
   card.value = false

@@ -21,11 +21,11 @@ withDefaults(defineProps<{
     <div class="p-veil" aria-hidden="true" />
     <div class="p-mandala" aria-hidden="true"><KbachMandala :petals="20" /></div>
     <GoldDust :count="36" />
-    <div class="wrap p-inner">
-      <div v-if="kicker" class="kicker" data-reveal><KhmerIcon :name="icon" :size="20" />{{ kicker }}</div>
-      <h1 class="p-title shimmer" data-ink>{{ title }}</h1>
-      <p v-if="en" class="en" data-scramble>{{ en.toUpperCase() }}</p>
-      <p v-if="sub" class="sub" data-words>{{ sub }}</p>
+    <div class="wrap p-inner kh-hero">
+      <div v-if="kicker" class="kicker"><KhmerIcon :name="icon" :size="20" />{{ kicker }}</div>
+      <h1 class="p-title shimmer" data-hero-ink>{{ title }}</h1>
+      <p v-if="en" class="en">{{ en.toUpperCase() }}</p>
+      <p v-if="sub" class="sub">{{ sub }}</p>
       <slot />
     </div>
   </section>
