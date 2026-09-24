@@ -83,9 +83,36 @@ function syncUrl() {
   router.replace({ query })
 }
 
+// ---------- fullscreen: panel + map together ----------
+// The map's fullscreen button enlarges this whole section, so search and the
+// list stay usable. The panel floats over the map (desktop) or becomes a bottom
+// sheet (phone), and folds away to a tab to give the map the whole screen.
+const appEl = ref<HTMLElement | null>(null)
+const fs = ref(false)
+const panelOpen = ref(true)
+const wide = ref(true)
+let mq: MediaQueryList | null = null
+const onMq = (e: MediaQueryListEvent) => { wide.value = e.matches }
+onMounted(() => {
+  mq = matchMedia('(min-width: 901px)')
+  wide.value = mq.matches
+  mq.addEventListener('change', onMq)
+})
+onBeforeUnmount(() => mq?.removeEventListener('change', onMq))
+// Desktop opens with the panel beside the map; a phone opens on the map, with
+// the list one tap away.
+watch(fs, (on) => { panelOpen.value = !on || wide.value })
+// What the panel (or its tab) covers on the map's left, for the map's own UI.
+const mapInset = computed(() => !fs.value ? 0 : wide.value ? (panelOpen.value ? 398 : 76) : 64)
+
 function pick(id: string) {
   focus.value = id
   mapRef.value?.select(id)
+  if (fs.value) {
+    // on a phone the sheet would cover the temple's card
+    if (!wide.value) panelOpen.value = false
+    return
+  }
   if (window.innerWidth < 900) document.querySelector('.stage')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
 }
 // Keep the chosen row visible — scrolling the list only (desktop), never the page.
@@ -121,8 +148,19 @@ const rowSub = (t: TempleRow) => [t.en && t.en !== t.km ? t.en : '', t.y].filter
       <p class="lead">ប្រាសាទប្រវត្តិសាស្ត្រ {{ ready ? khmerNum(f.temples.value.length) : '…' }} កន្លែង ទូទាំងប្រទេស — ស្វែងរកតាមខេត្ត ស្រុក ឃុំ ភូមិ ហើយចុចលើប្រាសាទនីមួយៗ ដើម្បីមើលទីតាំង និងអានប្រវត្តិ។</p>
     </header>
 
-    <section class="app wrap">
-      <aside class="side">
+    <section ref="appEl" class="app wrap" :class="{ fs, 'panel-closed': fs && !panelOpen }">
+      <button v-if="fs && !panelOpen" class="panel-tab" aria-controls="map-panel" aria-expanded="false" title="បង្ហាញបញ្ជីប្រាសាទ" @click="panelOpen = true">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10" /></svg>
+        <span class="n">{{ khmerNum(results.length) }}</span>
+      </button>
+      <aside id="map-panel" class="side" :inert="fs && !panelOpen ? true : undefined">
+        <div v-if="fs" class="side-head">
+          <span class="grip" aria-hidden="true" />
+          <span class="side-title"><KhmerIcon name="temple" :size="20" />ស្វែងរកប្រាសាទ</span>
+          <button class="side-x" :title="wide ? 'បង្រួមបញ្ជី' : 'បិទបញ្ជី'" :aria-label="wide ? 'បង្រួមបញ្ជី' : 'បិទបញ្ជី'" aria-controls="map-panel" aria-expanded="true" @click="panelOpen = false">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path v-if="wide" d="m15 6-6 6 6 6" /><path v-else d="m6 9 6 6 6-6" /></svg>
+          </button>
+        </div>
         <label class="search">
           <KhmerIcon name="compass" :size="18" />
           <input v-model="q" type="search" placeholder="ស្វែងរកប្រាសាទ… (ខ្មែរ ឬ English)" aria-label="ស្វែងរកប្រាសាទ">
@@ -209,7 +247,7 @@ const rowSub = (t: TempleRow) => [t.en && t.en !== t.km ? t.en : '', t.y].filter
 
       <div class="stage">
         <ClientOnly>
-          <PlaceMap ref="mapRef" :places="shownPlaces" :temples="results" :focus="focus" :boundary="boundary" :hover-id="hoverId" full @select="onMapSelect" />
+          <PlaceMap ref="mapRef" :places="shownPlaces" :temples="results" :focus="focus" :boundary="boundary" :hover-id="hoverId" :fs-target="appEl" :inset="mapInset" full @select="onMapSelect" @fullscreen="fs = $event" />
           <template #fallback><div class="map-fallback" /></template>
         </ClientOnly>
       </div>
@@ -271,5 +309,30 @@ h1{font-family:var(--display);font-size:clamp(1.7rem,3.6vw,2.5rem);color:var(--i
   .app{grid-template-columns:minmax(0,1fr);height:auto;padding-left:16px;padding-right:16px}
   .stage{order:-1;height:70vh;min-height:440px}
   .list{overflow:visible}
+}
+
+/* ---- Fullscreen: the whole section (panel + map) fills the screen ---- */
+.app.fs{position:relative;display:block;width:100%;max-width:none;height:100dvh;min-height:0;margin:0;padding:0;background:var(--night)}
+.app.fs .stage{position:absolute;inset:0;height:auto;min-height:0}
+.app.fs .side{position:absolute;z-index:6;top:14px;left:14px;bottom:14px;width:370px;background:rgba(10,17,13,.94);box-shadow:0 18px 50px rgba(0,0,0,.55);transition:transform .4s var(--ease),opacity .3s var(--ease)}
+.app.fs.panel-closed .side{transform:translateX(calc(-100% - 24px));opacity:0;pointer-events:none}
+.side-head{display:flex;align-items:center;gap:8px;margin:-2px 0 10px}
+.grip{display:none}
+.side-title{flex:1;display:flex;align-items:center;gap:8px;font-family:var(--title);font-size:.95rem;line-height:1.8;color:var(--gold-2)}
+.side-x,.panel-tab{display:grid;place-items:center;border:1px solid rgba(212,175,55,.3);background:rgba(10,17,13,.88);color:var(--gold-2);cursor:pointer;transition:background .2s,border-color .2s}
+.side-x{width:34px;height:34px;border-radius:var(--r-sm)}
+.side-x:hover,.panel-tab:hover{background:rgba(212,175,55,.16);border-color:var(--gold)}
+.side-x svg,.panel-tab svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.panel-tab{position:absolute;z-index:6;top:14px;left:14px;width:48px;height:48px;border-radius:var(--r-md);box-shadow:0 12px 30px rgba(0,0,0,.45)}
+.panel-tab .n{position:absolute;top:-8px;right:-10px;min-width:22px;padding:0 6px;border-radius:var(--r-pill);background:var(--gold-2);color:var(--night);font-family:var(--khmer);font-size:.66rem;line-height:1.75;text-align:center}
+
+/* phone: the panel is a bottom sheet over the map */
+@media (max-width:900px){
+  .app.fs .side{top:auto;left:0;right:0;bottom:0;width:auto;max-height:80dvh;border-radius:var(--r-xl) var(--r-xl) 0 0;border-width:1px 0 0;padding:8px 14px max(14px,env(safe-area-inset-bottom))}
+  .app.fs.panel-closed .side{transform:translateY(calc(100% + 24px))}
+  .app.fs .list{overflow:auto}
+  .app.fs .grip{display:block;position:absolute;top:6px;left:50%;width:40px;height:4px;margin-left:-20px;border-radius:var(--r-pill);background:rgba(212,175,55,.35)}
+  .app.fs .side-head{margin-top:8px}
+  .panel-tab{top:10px;left:10px;width:44px;height:44px}
 }
 </style>

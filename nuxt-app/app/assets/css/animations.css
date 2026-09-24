@@ -113,3 +113,9 @@ html.js-anim [data-img-reveal] { clip-path: inset(100% 0 0 0); }
   .page-enter-active, .page-leave-active { transition: none; }
 }
 @media (pointer: fine) { html.js-anim, html.js-anim a, html.js-anim button { cursor: none; } }
+/* The gold cursor lives in <body>, outside a fullscreen element (and below the
+   fullscreen fallback layer), so inside fullscreen show the native cursor. */
+@media (pointer: fine) {
+  html.js-anim :fullscreen, html.js-anim [data-kh-pseudo-fs] { cursor: auto; }
+  html.js-anim :fullscreen :is(a, button, select), html.js-anim [data-kh-pseudo-fs] :is(a, button, select) { cursor: pointer; }
+}

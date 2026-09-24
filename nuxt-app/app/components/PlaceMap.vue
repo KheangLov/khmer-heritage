@@ -29,8 +29,13 @@ const props = withDefaults(defineProps<{
   country?: string
   boundary?: GeoJSON.Feature | null
   hoverId?: string
-}>(), { temples: null, withTemples: false, focus: '', full: false, country: '', boundary: null, hoverId: '' })
-const emit = defineEmits<{ select: [id: string] }>()
+  /** element the fullscreen button enlarges (e.g. the /map page's panel + map); defaults to the map itself */
+  fsTarget?: HTMLElement | null
+  /** px on the left covered by the host's overlays (a floating panel), so the card, the
+   *  map/satellite switch and camera moves keep clear of them */
+  inset?: number
+}>(), { temples: null, withTemples: false, focus: '', full: false, country: '', boundary: null, hoverId: '', fsTarget: null, inset: 0 })
+const emit = defineEmits<{ select: [id: string]; fullscreen: [on: boolean] }>()
 
 const root = ref<HTMLElement | null>(null)
 const mapEl = ref<HTMLElement | null>(null)
@@ -273,13 +278,24 @@ function addLayers() {
 }
 
 // ---------- selection ----------
+// Width on the left hidden behind overlays — the host's panel plus the info
+// card — so a selected place lands in the part of the map you can see.
+// (Below 700px the card sits under/over the bottom of the map instead.)
+const leftUi = (withCard: boolean) =>
+  (root.value?.clientWidth ?? 800) >= 700 ? props.inset + (withCard ? 400 : 0) : 0
+// Camera offset for a centred place: right of the left-hand overlays, or — a
+// phone in fullscreen, where the card floats over the bottom ~58% — upwards.
+function centreOffset(): [number, number] {
+  const w = root.value?.clientWidth ?? 800
+  if (w >= 700) return [leftUi(true) / 2, 0]
+  return [0, fullscreen.value ? -(root.value?.clientHeight ?? 600) * 0.29 : 0]
+}
 function select(id: string, fly = true) {
   selectedId.value = id
   emit('select', id)
   const s = sel.value
   if (map && s && fly) {
-    const wide = (root.value?.clientWidth ?? 800) >= 700
-    map.flyTo({ center: [s.lng, s.lat], zoom: Math.max(map.getZoom(), s.approx ? 11 : 14.5), duration: 1300, essential: true, offset: wide ? [170, 0] : [0, 0] })
+    map.flyTo({ center: [s.lng, s.lat], zoom: Math.max(map.getZoom(), s.approx ? 11 : 14.5), duration: 1300, essential: true, offset: centreOffset() })
   }
 }
 function closeCard() { selectedId.value = '' }
@@ -297,23 +313,21 @@ watch(() => props.boundary, (f) => {
   const b = new ml.LngLatBounds()
   const walk = (c: unknown): void => { if (typeof (c as number[])[0] === 'number') b.extend(c as [number, number]); else (c as unknown[]).forEach(walk) }
   walk((f.geometry as GeoJSON.Polygon).coordinates)
-  const wide = (root.value?.clientWidth ?? 800) >= 700
-  map.fitBounds(b, { padding: { top: 60, bottom: 60, right: 70, left: wide && sel.value ? 420 : 60 }, maxZoom: 13, duration: 900 })
+  map.fitBounds(b, { padding: { top: 60, bottom: 60, right: 70, left: leftUi(!!sel.value) + 60 }, maxZoom: 13, duration: 900 })
 })
 
 function fitAll() {
   if (!map || !ml) return
   if (props.country || (!props.places.length && !props.temples)) { map.fitBounds(CAMBODIA_BOUNDS, { padding: 40, duration: 800 }); return }
   const pts: Array<{ lat: number; lng: number; approx?: boolean }> = [...props.places, ...(props.temples ?? [])]
-  const wide = (root.value?.clientWidth ?? 800) >= 700
   if (pts.length === 1) {
     const p = pts[0]!
-    map.flyTo({ center: [p.lng, p.lat], zoom: p.approx ? 11 : 14.5, offset: wide ? [170, 0] : [0, 0], duration: 800 })
+    map.flyTo({ center: [p.lng, p.lat], zoom: p.approx ? 11 : 14.5, offset: centreOffset(), duration: 800 })
     return
   }
   const b = new ml.LngLatBounds()
   pts.forEach((p) => b.extend([p.lng, p.lat]))
-  map.fitBounds(b, { padding: { top: 70, bottom: 70, left: wide && sel.value ? 420 : 70, right: 80 }, maxZoom: 14, duration: 800 })
+  map.fitBounds(b, { padding: { top: 70, bottom: 70, left: leftUi(!!sel.value) + 70, right: 80 }, maxZoom: 14, duration: 800 })
 }
 defineExpose({ select, fitAll })
 
@@ -332,11 +346,38 @@ function toggle3d() {
   map.setTerrain(terrain3d.value ? { source: 'terrain-dem', exaggeration: 1.6 } : null)
   map.easeTo({ pitch: terrain3d.value ? 62 : 0, bearing: terrain3d.value ? -18 : 0, duration: 1000 })
 }
-async function toggleFullscreen() {
-  if (!document.fullscreenElement) await root.value?.requestFullscreen?.()
-  else await document.exitFullscreen()
+// Fullscreen enlarges `fsTarget` (on /map: the search panel + map together) or
+// the map itself. iPhone Safari has no element fullscreen, so where the API is
+// missing or refused, a fixed full-viewport layer ([data-kh-pseudo-fs]) stands in.
+const pseudoFs = ref(false)
+const fsEl = () => props.fsTarget ?? root.value
+type Lenis = { stop: () => void; start: () => void }
+function setPseudoFs(on: boolean) {
+  pseudoFs.value = on
+  // an attribute, not a class: a host's :class binding would overwrite a class
+  fsEl()?.toggleAttribute('data-kh-pseudo-fs', on)
+  document.documentElement.classList.toggle('kh-no-scroll', on)
+  const lenis = useNuxtApp().$lenis as Lenis | undefined
+  if (on) lenis?.stop()
+  else lenis?.start()
+  fullscreen.value = on
 }
-const onFsChange = () => { fullscreen.value = document.fullscreenElement === root.value }
+async function toggleFullscreen() {
+  const el = fsEl()
+  if (!el) return
+  if (fullscreen.value) {
+    if (document.fullscreenElement) await document.exitFullscreen()
+    else setPseudoFs(false)
+    return
+  }
+  if (document.fullscreenEnabled && el.requestFullscreen) {
+    try { await el.requestFullscreen(); return } catch { /* refused: use the fallback */ }
+  }
+  setPseudoFs(true)
+}
+const onFsChange = () => { fullscreen.value = pseudoFs.value || (!!document.fullscreenElement && document.fullscreenElement === fsEl()) }
+const onFsKey = (e: KeyboardEvent) => { if (e.key === 'Escape' && pseudoFs.value) setPseudoFs(false) }
+watch(fullscreen, (on) => emit('fullscreen', on))
 async function copyCoords() {
   if (!sel.value) return
   await navigator.clipboard?.writeText(`${sel.value.lat}, ${sel.value.lng}`)
@@ -369,8 +410,7 @@ function locate() {
     drawRoute()
     if (first) {
       first = false
-      const wide = (root.value?.clientWidth ?? 800) >= 700
-      if (sel.value) map.fitBounds(new ml.LngLatBounds(ll, ll).extend([sel.value.lng, sel.value.lat]), { padding: { top: 90, bottom: 90, right: 90, left: wide ? 440 : 90 }, maxZoom: 14, duration: 1100 })
+      if (sel.value) map.fitBounds(new ml.LngLatBounds(ll, ll).extend([sel.value.lng, sel.value.lat]), { padding: { top: 90, bottom: 90, right: 90, left: leftUi(true) + 90 }, maxZoom: 14, duration: 1100 })
       else map.flyTo({ center: ll, zoom: 12 })
     }
   }, (err) => {
@@ -461,6 +501,7 @@ async function init() {
 onMounted(() => {
   canCompass.value = 'DeviceOrientationEvent' in window && matchMedia('(pointer: coarse)').matches
   document.addEventListener('fullscreenchange', onFsChange)
+  document.addEventListener('keydown', onFsKey)
   // Embedded maps start only when scrolled near, so article pages load light.
   if (props.full || !('IntersectionObserver' in window)) { init(); return }
   io = new IntersectionObserver((entries) => {
@@ -474,6 +515,8 @@ onBeforeUnmount(() => {
   window.removeEventListener('deviceorientationabsolute', onOrientation as EventListener)
   window.removeEventListener('deviceorientation', onOrientation as EventListener)
   document.removeEventListener('fullscreenchange', onFsChange)
+  document.removeEventListener('keydown', onFsKey)
+  if (pseudoFs.value) setPseudoFs(false)
   resizeObs?.disconnect()
   map?.remove()
   map = null
@@ -481,7 +524,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div ref="root" class="pm" :class="{ full, fs: fullscreen }">
+  <div ref="root" class="pm" :class="{ full, fs: fullscreen }" :style="inset ? { '--pm-inset': `${inset}px` } : undefined">
     <div class="pm-stage">
       <div ref="mapEl" class="pm-map" data-lenis-prevent role="application" aria-label="ផែនទីទីតាំងប្រវត្តិសាស្ត្រ" />
 
@@ -611,7 +654,8 @@ onBeforeUnmount(() => {
 .pm-stage{position:relative}
 .pm-map{height:480px;background:#0B1310}
 .full,.full .pm-stage,.full .pm-map{height:100%}
-.fs .pm-stage,.fs .pm-map{height:100vh}
+.fs,.fs .pm-stage,.fs .pm-map{height:100%}
+.fs{border:0;border-radius:0;box-shadow:none}
 
 .pm-loading{position:absolute;inset:0;display:grid;place-content:center;justify-items:center;gap:10px;font-family:var(--khmer);line-height:1.9;color:var(--stone);background:radial-gradient(60% 60% at 50% 50%,rgba(46,74,53,.5),#0B1310)}
 .spin{color:var(--gold-2);animation:pm-spin 2.4s linear infinite}
@@ -620,7 +664,7 @@ onBeforeUnmount(() => {
 /* glass surfaces — near-solid backgrounds instead of heavy backdrop blur keep panning smooth */
 .pm-seg,.pm-ctrl,.pm-card,.pm-country{background:var(--glass);border:1px solid rgba(212,175,55,.22);box-shadow:0 12px 30px rgba(0,0,0,.4)}
 
-.pm-seg{position:absolute;top:14px;left:14px;display:flex;padding:3px;border-radius:var(--r-pill);z-index:3}
+.pm-seg{position:absolute;top:14px;left:var(--pm-inset,14px);transition:left .4s var(--ease);display:flex;padding:3px;border-radius:var(--r-pill);z-index:3}
 .pm-seg button{font-family:var(--khmer);font-size:.82rem;line-height:1.8;padding:2px 14px;border-radius:var(--r-pill);border:0;background:none;color:var(--ivory-dim);cursor:pointer;transition:background .25s,color .25s}
 .pm-seg button.on{background:linear-gradient(180deg,var(--gold-2),var(--gold));color:var(--night)}
 
@@ -635,7 +679,7 @@ onBeforeUnmount(() => {
 .pm-country{position:absolute;left:14px;bottom:14px;max-width:440px;display:flex;gap:12px;align-items:center;padding:14px 18px;border-radius:var(--r-lg);color:var(--gold-2);z-index:3}
 .pm-country p{font-family:var(--khmer);font-size:.92rem;line-height:1.95;color:var(--ivory)}
 
-.pm-card{position:absolute;left:14px;top:62px;width:min(380px,calc(100% - 90px));max-height:calc(100% - 76px);overflow:auto;border-radius:var(--r-xl);z-index:4;scrollbar-width:thin;overscroll-behavior:contain}
+.pm-card{position:absolute;left:var(--pm-inset,14px);top:62px;transition:left .4s var(--ease);width:min(380px,calc(100% - 90px));max-height:calc(100% - 76px);overflow:auto;border-radius:var(--r-xl);z-index:4;scrollbar-width:thin;overscroll-behavior:contain}
 .x{position:absolute;top:8px;right:8px;z-index:2;width:30px;height:30px;border-radius:var(--r-sm);border:1px solid rgba(212,175,55,.3);background:rgba(10,17,13,.8);color:var(--gold-2);font-size:1.1rem;line-height:1;cursor:pointer}
 .c-img{height:128px;overflow:hidden;position:relative}
 .c-img img{width:100%;height:100%;object-fit:cover}
@@ -696,13 +740,23 @@ onBeforeUnmount(() => {
   .full .pm-stage{display:flex;flex-direction:column}
   .full .pm-map{flex:1;min-height:300px}
   .pm-card{position:relative;top:auto;left:auto;width:auto;max-height:none;border-radius:0;border-width:1px 0 0;box-shadow:none;background:var(--moss-3)}
-  .pm-seg{top:10px;left:10px}
+  .pm-seg{top:10px;left:var(--pm-inset,10px)}
+  /* fullscreen on a phone: the card floats over the bottom of the map */
+  .fs .pm-stage{display:block}
+  .fs .pm-card{position:absolute;top:auto;left:10px;right:10px;bottom:10px;max-height:58%;border-radius:var(--r-lg);border-width:1px;background:var(--glass);box-shadow:0 12px 30px rgba(0,0,0,.45)}
   .pm-ctrl{top:10px;right:10px}
   .pm-country{left:10px;right:10px;bottom:10px;max-width:none}
 }
 </style>
 
 <style>
+/* Fullscreen fallback where the Fullscreen API is missing (iPhone Safari). */
+[data-kh-pseudo-fs]{position:fixed!important;inset:0;z-index:1000;width:100vw!important;max-width:none!important;height:100dvh!important;margin:0!important}
+html.kh-no-scroll{overflow:hidden}
+/* <main> is its own stacking context under the fixed site header; lift it
+   above the header while the layer is up, and drop the scroll-progress bar. */
+html.kh-no-scroll main{z-index:100}
+html.kh-no-scroll .kh-progress{display:none}
 /* MapLibre chrome (global: MapLibre builds this DOM). */
 .pm .maplibregl-ctrl-attrib{background:rgba(10,17,13,.8)!important;color:var(--stone);font-size:10px;line-height:1.6}
 .pm .maplibregl-ctrl-attrib a{color:var(--gold-2)}
